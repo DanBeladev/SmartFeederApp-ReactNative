@@ -7,12 +7,12 @@ import {
   TextInput,
   TouchableWithoutFeedback
 } from "react-native";
+import UserPage from './UserPage'
 
 export default class Login extends Component {
   state = {
     email: "",
     password: "",
-    registeredPressed:false
   };
 
   onEmailChangeHandler = selectedEmail => {
@@ -27,6 +27,17 @@ export default class Login extends Component {
       console.log('registerd')
       this.setState({registeredPressed:true})
   };
+
+  onLoginPressed = () => {
+    console.log('hereee')
+    const user = 
+    {
+        email:this.state.email,
+        password:this.state.password
+    } 
+    console.log(user)
+    let output =  <UserPage userDetails={user}/>
+  }
 
   render() {
     return (
@@ -59,7 +70,7 @@ export default class Login extends Component {
           />
         </View>
         <View style={styles.loginContainer}>
-          <Text style={styles.loginBtn} onPress={() => {}}>
+          <Text style={styles.loginBtn} onPress={this.onLoginPressed}>
             Login
           </Text>
         </View>
