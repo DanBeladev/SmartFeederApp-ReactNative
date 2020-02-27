@@ -3,12 +3,9 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
-  TextInput,
-  TouchableWithoutFeedback
 } from "react-native";
 
-export default class Login extends Component {
+export default class UserPage extends Component {
   state = {
     email: "",
     password: ""
@@ -30,7 +27,8 @@ export default class Login extends Component {
   render() {
     return (
       <View>
-        <Text>{this.props.user.fullName}</Text>
+        <Text>email: {this.props.user.email}</Text>
+        <Text>password: {this.props.user.password}</Text>
       </View>
     );
   }

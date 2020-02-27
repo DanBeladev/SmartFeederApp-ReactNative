@@ -1,7 +1,9 @@
 import React, {useState} from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Login from './screens/Login'
 import SignInScreen from './screens/SignInScreen'
+
+
 export default function App() {
   const [registerPressed,setRegisterPressed] = useState(false)
 
@@ -24,9 +26,7 @@ export default function App() {
   }
   return (
     <View style={styles.container}>
-      {/* <Login /> */}
       {pageToShow}
-      {/* <SignInScreen /> */}
     </View>
   );
 }

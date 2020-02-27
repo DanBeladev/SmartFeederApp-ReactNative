@@ -13,6 +13,7 @@ export default class Login extends Component {
   state = {
     email: "",
     password: "",
+    isLoggedIn:false,
   };
 
   onEmailChangeHandler = selectedEmail => {
@@ -24,19 +25,69 @@ export default class Login extends Component {
   };
 
   onRegisterHandler = () => {
-      console.log('registerd')
       this.setState({registeredPressed:true})
   };
 
   onLoginPressed = () => {
-    console.log('hereee')
-    const user = 
+    
+    this.setState({isLoggedIn:true});
+  }
+
+  renderPage = () => {
+
+    if(isLoggedIn)
     {
-        email:this.state.email,
-        password:this.state.password
-    } 
-    console.log(user)
-    let output =  <UserPage userDetails={user}/>
+      console.log('is logged in')
+      const user = 
+      {
+          email:this.state.email,
+          password:this.state.password
+      } 
+       return(<UserPage userDetails={user} />);
+    }
+    else{
+      console.log('not logged in')
+      return( <View style={styles.screen}>
+        <Image
+          style={styles.img}
+          source={require("../assets/hand.png")}
+        ></Image>
+        <View style={styles.inputContainer}>
+          <Text style={styles.text}>Email</Text>
+          <TextInput
+            style={styles.emailInput}
+            keyboardType="email-address"
+            blurOnSubmit
+            autoCapitalize="none"
+            autoCorrect={false}
+            onChangeText={text => this.onEmailChangeHandler(text)}
+            value={this.state.email}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.text}>Password</Text>
+          <TextInput
+            style={styles.emailInput}
+            blurOnSubmit
+            autoCapitalize="none"
+            autoCorrect={false}
+            onChangeText={text => this.onPasswordChangedHandler(text)}
+            value={this.state.password}
+          />
+        </View>
+        <View style={styles.loginContainer}>
+          <Text style={styles.loginBtn} onPress={this.onLoginPressed}>
+            Login
+          </Text>
+        </View>
+        <TouchableWithoutFeedback onPress={this.props.onRegisterPress}>
+          <Text style={styles.register}>
+            Not have an acoount? press here to register
+          </Text>
+        </TouchableWithoutFeedback> 
+        <UserPage />
+      </View>)
+    }
   }
 
   render() {
@@ -78,7 +129,7 @@ export default class Login extends Component {
           <Text style={styles.register}>
             Not have an acoount? press here to register
           </Text>
-        </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback> 
       </View>
     );
   }
