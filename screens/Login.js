@@ -8,7 +8,7 @@ import {
   TouchableWithoutFeedback
 } from "react-native";
 import UserPage from './UserPage'
-//Commaned By Lior ---- Delete After
+//Commaned By Lior ---- Delete Afterrr
 export default class Login extends Component {
   state = {
     email: "",
