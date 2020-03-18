@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback
 } from "react-native";
 import UserPage from './UserPage'
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default class Login extends Component {
   state = {
@@ -29,13 +30,12 @@ export default class Login extends Component {
   };
 
   onLoginPressed = () => {
-    
     this.setState({isLoggedIn:true});
   }
 
   renderPage = () => {
-
-    if(isLoggedIn)
+    console.log('render page')
+    if(this.state.isLoggedIn)
     {
       console.log('is logged in')
       const user = 
@@ -80,12 +80,11 @@ export default class Login extends Component {
             Login
           </Text>
         </View>
-        <TouchableWithoutFeedback onPress={this.props.onRegisterPress}>
+        <TouchableOpacity onPress={this.props.onRegisterPress}>
           <Text style={styles.register}>
             Not have an acoount? press here to register
           </Text>
-        </TouchableWithoutFeedback> 
-        <UserPage />
+        </TouchableOpacity> 
       </View>)
     }
   }
