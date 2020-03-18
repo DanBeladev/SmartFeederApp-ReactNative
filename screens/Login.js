@@ -8,8 +8,12 @@ import {
   TouchableWithoutFeedback
 } from "react-native";
 import UserPage from './UserPage'
+<<<<<<< HEAD
 import { TouchableOpacity } from "react-native-gesture-handler";
 
+=======
+// nave comment
+>>>>>>> 4ca4b38dff31a81ea4e3442faf494f630ede45a8
 export default class Login extends Component {
   state = {
     email: "",

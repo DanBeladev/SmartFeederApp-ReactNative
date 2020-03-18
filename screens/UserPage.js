@@ -10,7 +10,7 @@ export default class UserPage extends Component {
     email: "",
     password: ""
   };
-
+//comment by dekel
   onEmailChangeHandler = selectedEmail => {
     this.setState({ email: selectedEmail });
   };
