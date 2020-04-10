@@ -4,6 +4,13 @@ import Login from './screens/Login'
 import SignInScreen from './screens/SignInScreen'
 import DogsScreen from './screens/AllUserDog/DogsScreen'
 import UserPage from './screens/UserPage';
+import Routes from './Routes';
+import firebaseConfig from './api/firebaseConfig'
+import * as firebase from 'firebase';
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+// firebase.analytics();
 
 
 export default function App() {
@@ -39,8 +46,9 @@ export default function App() {
   {
     pageToShow = <Login onLoginPressed={onLoginHandler} onRegisterPress={onRegisterPressed}/>
   }
-  pageToShow= <DogsScreen></DogsScreen>
-  return (pageToShow);
+  return (
+    <Routes />
+    );
 }
 
 const styles = StyleSheet.create({

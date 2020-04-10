@@ -1,0 +1,1 @@
+export const errorColor = '#E9466a';

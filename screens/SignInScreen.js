@@ -1,14 +1,16 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, TextInput, Alert } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import Login from "./Login";
-
+import { Actions } from 'react-native-router-flux';
+import * as firebase from 'firebase';
+import * as constants from '../common/constants'
 export default class SignInScreen extends Component {
   state = {
     email: "",
     password: "",
     phone: "",
-    fullName: ""
+    fullName: "",
+    errorMessage: null
   };
 
   onEmailChangeHandler = selectedEmail => {
@@ -26,22 +28,29 @@ export default class SignInScreen extends Component {
     this.setState({ password: selectedPassword });
   };
 
+  inputValidator = () =>{
+    const isValid = (this.state.fullName && this.state.phone && this.state.email && this.state.password) ? true: false;
+     return isValid;
+  }
+
   onSignInPressed = () => {
-    Alert.alert(
-      this.state.fullName +
-        " " +
-        this.state.phone +
-        " " +
-        this.state.email +
-        " " +
-        this.state.password +
-        " "
-    );
+    const validInput = this.inputValidator();
+    if(validInput){
+      firebase.auth().createUserWithEmailAndPassword(this.state.email,this.state.password)
+      .then(() => {
+        Alert.alert('addded succesfully');
+        Actions.home();
+      })
+      .catch((err) => this.setState({errorMessage: err.message}));
+    }
+    else
+    {
+      this.setState({errorMessage: 'Please insert details'})
+    }
   };
 
   backPressed = () => {
-    Alert.alert("back pressed");
-    this.props.goBack()
+    Actions.pop();
   };
 
   render() {
@@ -54,8 +63,9 @@ export default class SignInScreen extends Component {
           <Text style={styles.backBtn}>back</Text>
         </TouchableOpacity>
         <View style={styles.inputContainer}>
-          <Text style={styles.text}>Full Name</Text>
+          {/* <Text style={styles.text}>Full Name</Text> */}
           <TextInput
+            placeholder ="Full Name"
             style={styles.emailInput}
             blurOnSubmit
             autoCapitalize="none"
@@ -66,8 +76,9 @@ export default class SignInScreen extends Component {
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.text}>Phone</Text>
+          {/* <Text style={styles.text}>Phone</Text> */}
           <TextInput
+            placeholder ="Phone"
             style={styles.emailInput}
             keyboardType="phone-pad"
             blurOnSubmit
@@ -79,9 +90,10 @@ export default class SignInScreen extends Component {
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.text}>Email</Text>
+          {/* <Text style={styles.text}>Email</Text> */}
           <TextInput
             style={styles.emailInput}
+            placeholder ="Email"
             keyboardType="email-address"
             blurOnSubmit
             autoCapitalize="none"
@@ -91,8 +103,9 @@ export default class SignInScreen extends Component {
           />
         </View>
         <View style={styles.inputContainer}>
-          <Text style={styles.text}>Password</Text>
+          {/* <Text style={styles.text}>Password</Text> */}
           <TextInput
+            placeholder ="Password"
             style={styles.emailInput}
             blurOnSubmit
             autoCapitalize="none"
@@ -101,9 +114,12 @@ export default class SignInScreen extends Component {
             value={this.state.password}
           />
         </View>
+        <View style = {styles.errorMessage}>
+        {this.state.errorMessage && <Text style = {styles.error}>{this.state.errorMessage}</Text>}
+        </View>  
         <View style={styles.loginContainer}>
           <Text style={styles.loginBtn} onPress={this.onSignInPressed}>
-            Sign In
+            Sign Up
           </Text>
         </View>
       </View>
@@ -124,6 +140,18 @@ const styles = StyleSheet.create({
     height: 200,
     width: 200,
     marginVertical: 50
+  },
+  errorMessage: {
+    height: 30,
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 30
+  },
+  error: {
+    color: constants.errorColor,
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center"
   },
   emailInput: {
     textAlign: "center",
