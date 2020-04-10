@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import { StyleSheet, View } from 'react-native';
 import Login from './screens/Login'
 import SignInScreen from './screens/SignInScreen'
+import DogsScreen from './screens/AllUserDog/DogsScreen'
 import UserPage from './screens/UserPage';
 
 
@@ -38,12 +39,8 @@ export default function App() {
   {
     pageToShow = <Login onLoginPressed={onLoginHandler} onRegisterPress={onRegisterPressed}/>
   }
-
-  return (
-    <View style={styles.container}>
-      {pageToShow}
-    </View>
-  );
+  pageToShow= <DogsScreen></DogsScreen>
+  return (pageToShow);
 }
 
 const styles = StyleSheet.create({

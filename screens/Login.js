@@ -8,8 +8,6 @@ import {
   TouchableWithoutFeedback,
   Alert
 } from "react-native";
-import UserPage from './UserPage'
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default class Login extends Component {
   state = {
