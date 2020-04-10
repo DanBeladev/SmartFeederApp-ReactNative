@@ -1,18 +1,14 @@
 import React, { Component } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Alert
-} from "react-native";
+import { View, Text, StyleSheet, TextInput, Alert } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import Login from "./Login";
 
 export default class SignInScreen extends Component {
   state = {
     email: "",
     password: "",
-    phone:"",
-    fullName:"",
+    phone: "",
+    fullName: ""
   };
 
   onEmailChangeHandler = selectedEmail => {
@@ -31,12 +27,32 @@ export default class SignInScreen extends Component {
   };
 
   onSignInPressed = () => {
-      Alert.alert(this.state.fullName + " " + this.state.phone + " "+ this.state.email + " "+ this.state.password + " ")
-  }
+    Alert.alert(
+      this.state.fullName +
+        " " +
+        this.state.phone +
+        " " +
+        this.state.email +
+        " " +
+        this.state.password +
+        " "
+    );
+  };
+
+  backPressed = () => {
+    Alert.alert("back pressed");
+    this.props.goBack()
+  };
 
   render() {
     return (
       <View style={styles.screen}>
+        <TouchableOpacity
+          style={styles.backContainer}
+          onPress={this.backPressed}
+        >
+          <Text style={styles.backBtn}>back</Text>
+        </TouchableOpacity>
         <View style={styles.inputContainer}>
           <Text style={styles.text}>Full Name</Text>
           <TextInput
@@ -121,8 +137,21 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     backgroundColor: "white"
   },
+  backContainer: {
+    alignContent: "flex-start"
+  },
+  backBtn: {
+    color: "blue",
+    width: 60,
+    backgroundColor: "white",
+    borderRadius: 50,
+    textAlign: "center",
+    fontSize: 15,
+    padding: 5,
+    borderWidth: 2
+  },
   inputContainer: {
-    flex:1,
+    flex: 1,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",

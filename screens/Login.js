@@ -5,15 +5,12 @@ import {
   StyleSheet,
   Image,
   TextInput,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  Alert
 } from "react-native";
 import UserPage from './UserPage'
-<<<<<<< HEAD
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-=======
-// nave comment
->>>>>>> 4ca4b38dff31a81ea4e3442faf494f630ede45a8
 export default class Login extends Component {
   state = {
     email: "",
@@ -34,63 +31,8 @@ export default class Login extends Component {
   };
 
   onLoginPressed = () => {
-    this.setState({isLoggedIn:true});
-  }
-
-  renderPage = () => {
-    console.log('render page')
-    if(this.state.isLoggedIn)
-    {
-      console.log('is logged in')
-      const user = 
-      {
-          email:this.state.email,
-          password:this.state.password
-      } 
-       return(<UserPage userDetails={user} />);
-    }
-    else{
-      console.log('not logged in')
-      return( <View style={styles.screen}>
-        <Image
-          style={styles.img}
-          source={require("../assets/hand.png")}
-        ></Image>
-        <View style={styles.inputContainer}>
-          <Text style={styles.text}>Email</Text>
-          <TextInput
-            style={styles.emailInput}
-            keyboardType="email-address"
-            blurOnSubmit
-            autoCapitalize="none"
-            autoCorrect={false}
-            onChangeText={text => this.onEmailChangeHandler(text)}
-            value={this.state.email}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.text}>Password</Text>
-          <TextInput
-            style={styles.emailInput}
-            blurOnSubmit
-            autoCapitalize="none"
-            autoCorrect={false}
-            onChangeText={text => this.onPasswordChangedHandler(text)}
-            value={this.state.password}
-          />
-        </View>
-        <View style={styles.loginContainer}>
-          <Text style={styles.loginBtn} onPress={this.onLoginPressed}>
-            Login
-          </Text>
-        </View>
-        <TouchableOpacity onPress={this.props.onRegisterPress}>
-          <Text style={styles.register}>
-            Not have an acoount? press here to register
-          </Text>
-        </TouchableOpacity> 
-      </View>)
-    }
+    Alert.alert("login pressed")
+    this.props.onLoginPressed()
   }
 
   render() {
