@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, TextInput, Alert } from "react-native";
+import { StatusBar, ScrollView, View, Text, StyleSheet, TextInput, Alert } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Actions } from 'react-native-router-flux';
 import * as firebase from 'firebase';
 import * as constants from '../common/constants'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 export default class SignInScreen extends Component {
   state = {
     email: "",
@@ -33,14 +34,28 @@ export default class SignInScreen extends Component {
      return isValid;
   }
 
+  createUser = () => {
+    firebase.database().ref('Users/').push({
+      email: this.state.email,
+      phone: this.state.phone,
+      name: this.state.fullName
+  }).then((data)=>{
+      //success callback
+      console.log('data ' , data)
+  }).catch((error)=>{
+      //error callback
+      console.log('error ' , error)
+  })
+  }
+
   onSignInPressed = () => {
     const validInput = this.inputValidator();
     if(validInput){
       firebase.auth().createUserWithEmailAndPassword(this.state.email,this.state.password)
-      .then(() => {
-        Alert.alert('addded succesfully');
-        Actions.home();
-      })
+      .then(()=> {   
+      this.createUser();
+      Alert.alert('addded succesfully');
+      Actions.home();})
       .catch((err) => this.setState({errorMessage: err.message}));
     }
     else
@@ -63,7 +78,6 @@ export default class SignInScreen extends Component {
           <Text style={styles.backBtn}>back</Text>
         </TouchableOpacity>
         <View style={styles.inputContainer}>
-          {/* <Text style={styles.text}>Full Name</Text> */}
           <TextInput
             placeholder ="Full Name"
             style={styles.emailInput}
@@ -76,7 +90,6 @@ export default class SignInScreen extends Component {
         </View>
 
         <View style={styles.inputContainer}>
-          {/* <Text style={styles.text}>Phone</Text> */}
           <TextInput
             placeholder ="Phone"
             style={styles.emailInput}
@@ -90,7 +103,6 @@ export default class SignInScreen extends Component {
         </View>
 
         <View style={styles.inputContainer}>
-          {/* <Text style={styles.text}>Email</Text> */}
           <TextInput
             style={styles.emailInput}
             placeholder ="Email"
@@ -103,7 +115,6 @@ export default class SignInScreen extends Component {
           />
         </View>
         <View style={styles.inputContainer}>
-          {/* <Text style={styles.text}>Password</Text> */}
           <TextInput
             placeholder ="Password"
             style={styles.emailInput}

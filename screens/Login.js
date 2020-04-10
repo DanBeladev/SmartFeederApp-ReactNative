@@ -7,9 +7,11 @@ import {
   TextInput,
   TouchableWithoutFeedback,
 } from 'react-native';
-import * as constants from '../common/constants'
+import * as constants from '../common/constants';
 import { Actions } from 'react-native-router-flux';
 import * as firebase from 'firebase';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { ScrollView } from 'react-native-gesture-handler';
 
 export default class Login extends Component {
   state = {
@@ -32,60 +34,67 @@ export default class Login extends Component {
   };
 
   onLoginPressed = () => {
-    firebase.auth().signInWithEmailAndPassword(this.state.email,this.state.password)
-    .then(()=>{
-      console.log('i did it')
-      Actions.home()})
-      .catch((err)=>this.setState({errorMessage: err.message}))
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(this.state.email, this.state.password)
+      .then(() => {
+        Actions.home();
+      })
+      .catch((err) => this.setState({ errorMessage: err.message }));
   };
 
   render() {
     return (
-      <View style={styles.screen}>
-        <Image
-          style={styles.img}
-          source={require('../assets/hand.png')}
-        ></Image>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.emailInput}
-            keyboardType='email-address'
-            blurOnSubmit
-            autoCapitalize='none'
-            autoCorrect={false}
-            placeholder='Email'
-            onChangeText={(text) => this.onEmailChangeHandler(text)}
-            value={this.state.email}
-            onSubmitEditing={() => this.password.focus()}
-          />
+      <KeyboardAwareScrollView>
+        <View style={styles.screen}>
+          <Image
+            style={styles.img}
+            source={require('../assets/hand.png')}
+          ></Image>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.emailInput}
+              keyboardType='email-address'
+              blurOnSubmit
+              autoCapitalize='none'
+              autoCorrect={false}
+              placeholder='Email'
+              onChangeText={(text) => this.onEmailChangeHandler(text)}
+              value={this.state.email}
+              onSubmitEditing={() => this.password.focus()}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.emailInput}
+              blurOnSubmit
+              autoCapitalize='none'
+              autoCorrect={false}
+              placeholder='Password'
+              secureTextEntry={true}
+              onChangeText={(text) => this.onPasswordChangedHandler(text)}
+              value={this.state.password}
+              ref={(input) => (this.password = input)}
+            />
+          </View>
+          <View style={styles.errorMessage}>
+            {this.state.errorMessage && (
+              <Text style={styles.error}>{this.state.errorMessage}</Text>
+            )}
+          </View>
+          <View style={styles.loginContainer}>
+            <Text style={styles.loginBtn} onPress={this.onLoginPressed}>
+              Login
+            </Text>
+          </View>
+          <TouchableWithoutFeedback onPress={this.onRegisterHandler}>
+            <Text style={styles.register}>
+              Not have an acoount? press here to{' '}
+              <Text style={{ color: 'white', fontSize: 20 }}>register</Text>
+            </Text>
+          </TouchableWithoutFeedback>
         </View>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.emailInput}
-            blurOnSubmit
-            autoCapitalize='none'
-            autoCorrect={false}
-            placeholder='Password'
-            secureTextEntry={true}
-            onChangeText={(text) => this.onPasswordChangedHandler(text)}
-            value={this.state.password}
-            ref={(input) => (this.password = input)}
-          />
-        </View>
-        <View style = {styles.errorMessage}>
-        {this.state.errorMessage && <Text style = {styles.error}>{this.state.errorMessage}</Text>}
-        </View>       
-        <View style={styles.loginContainer}>
-          <Text style={styles.loginBtn} onPress={this.onLoginPressed}>
-            Login
-          </Text>
-        </View>
-        <TouchableWithoutFeedback onPress={this.onRegisterHandler}>
-          <Text style={styles.register}>
-            Not have an acoount? press here to register
-          </Text>
-        </TouchableWithoutFeedback>
-      </View>
+      </KeyboardAwareScrollView>
     );
   }
 }
@@ -95,7 +104,7 @@ const styles = StyleSheet.create({
     padding: 20,
     marginTop: 10,
     alignItems: 'center',
-    flex: 1,
+    // flex: 1,
     backgroundColor: '#71C8B3',
   },
   img: {
@@ -118,15 +127,15 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     height: 30,
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 30
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 30,
   },
   error: {
     color: constants.errorColor,
     fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center"
+    fontWeight: '600',
+    textAlign: 'center',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -140,7 +149,6 @@ const styles = StyleSheet.create({
     marginEnd: 10,
   },
   loginContainer: {
-    // flex:1,
     alignItems: 'center',
     justifyContent: 'center',
     width: 300,

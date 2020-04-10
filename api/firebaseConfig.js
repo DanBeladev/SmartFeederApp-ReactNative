@@ -1,3 +1,4 @@
+// don't commit this file - for security
 export default firebaseConfig = {
     apiKey: "AIzaSyAJgdAV_V0uFJwvECasVpplckwvlD88tkM",
     authDomain: "smartfeeder-3c6b5.firebaseapp.com",
