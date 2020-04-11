@@ -70,6 +70,7 @@ export default class SignInScreen extends Component {
 
   render() {
     return (
+      <KeyboardAwareScrollView>
       <View style={styles.screen}>
         <TouchableOpacity
           style={styles.backContainer}
@@ -134,6 +135,7 @@ export default class SignInScreen extends Component {
           </Text>
         </View>
       </View>
+      </KeyboardAwareScrollView>
     );
   }
 }
