@@ -10,12 +10,3 @@ export function getAllUserDogs(){
     ]
     )
 }
-
-export function getAddDogFields(){
-    return([
-        {type:"text", title:"dog name"},
-        {type:"radio", title:"gender",radioProps: [{label: 'male     ', value: 0 },{label: 'female', value: 1 }]},
-        {type:'combo', title:"age", data:[{label:"1",value:1}, {label:"2",value:2}, {label:"3",value:3}, {label:"4",value:4}]}
-    
-      ])
-}

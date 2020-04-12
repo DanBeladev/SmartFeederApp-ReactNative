@@ -5,18 +5,28 @@ import {View, Button, Text,  StyleSheet, Image, TextInput, TouchableOpacity} fro
 export default class Form extends React.Component{
     constructor(props){
         super(props);
+        this.state={
+            fieldsToValue:{}
+        }
         this.buildForm=this.buildForm.bind(this);
+        this.handleChangingValue=this.handleChangingValue.bind(this);
         this.row=this.buildForm();
 
     }
     buildForm(){
-        return this.props.fields.map(v=><RowInForm params={v} key={v.title}></RowInForm>)
+        return this.props.fields.map(v=><RowInForm params={v} key={v.title} onGettingValue={this.handleChangingValue}></RowInForm>)
+    }
+
+    handleChangingValue(newVale,field){
+        let newFieldsToValue={...this.state.fieldsToValue};
+        newFieldsToValue[field]=newVale
+        this.setState({fieldsToValue:newFieldsToValue})
     }
 
     render(){
         return (<View style={styles.container}>
                     {this.buildForm()}
-                    <TouchableOpacity style={styles.but} on onPress={()=>{this.props.callBack()}}>
+                    <TouchableOpacity style={styles.but} on onPress={()=>{this.props.callBack(this.state.fieldsToValue)}}>
                         <Text style={styles.textBtn}>Send</Text>
                     </TouchableOpacity>
                 </View>) ;
