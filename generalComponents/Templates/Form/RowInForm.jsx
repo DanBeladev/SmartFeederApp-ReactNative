@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import * as ImagePicker from 'expo-image-picker';
+import Constants from 'expo-constants';
+import * as Permissions from 'expo-permissions';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import { Dropdown } from 'react-native-material-dropdown';
 import {View,  Text, Button, StyleSheet, Picker, TextInput} from "react-native";
@@ -7,9 +10,42 @@ export default class RowInForm extends React.Component{
     constructor(props){
         super(props);
         this.state={
-            val:null
+            val:null,
         }
+        this.image;
+        this.getPermissionAsync=this.getPermissionAsync.bind(this);
+        this.pickImage=this.pickImage.bind(this);
     }
+    componentDidMount(){
+        this.getPermissionAsync();
+    }
+    async pickImage(){
+        try {
+          let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+          });
+          if (!result.cancelled) {
+            this.image= result.uri;
+            console.log(result.uri);
+            this.props.onGettingValue({uri:this.image},this.props.params.field)
+          }
+    
+          console.log(result);
+        } catch (E) {
+          console.log(E);
+        }
+      }
+    async getPermissionAsync(){
+        if (Constants.platform.ios) {
+          const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+          if (status !== 'granted') {
+            alert('Sorry, we need camera roll permissions to make this work!');
+          }
+        }
+      }
     render(){
 
         if(!this.props.params){
@@ -35,8 +71,11 @@ export default class RowInForm extends React.Component{
                                 {this.props.params.data.map(v=><Picker.Item key={v.label} label={v.label} value={v.value}/>)}
                           </Picker>   
                 break;
+            case "pic":
+                this.elem=<Button title={this.props.params.title} onPress={()=>this.pickImage()}  />
+                break;    
             case "button":
-                this.elem=<Button title={this.props.params.title} onPress={()=>this.props.params.onClick()}></Button>    
+                this.elem=<Button title={this.props.params.title} onPress={()=>this.props.params.pickImage()}></Button>    
         }
         return <View style={styles.container}><Text>{this.props.params.labelVisibale?this.props.params.title+":  ":""}</Text>{this.elem}</View>
     }

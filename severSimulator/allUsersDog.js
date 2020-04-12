@@ -4,8 +4,7 @@ import dogExample3 from './motek.jpg'
 
 export function getAllUserDogs(){
     return(
-        [{dogImg:dogExample1,dogName:"Nheorai", lastMealTime:"12:33",nextMealTime: "12:42"},
-         {dogImg:dogExample2,dogName:"HoMo", lastMealTime:"12:23",nextMealTime: "13:44"},
+        [{dogImg:dogExample2,dogName:"HoMo", lastMealTime:"12:23",nextMealTime: "13:44"},
          {dogImg:dogExample3,dogName:"Mustapha", lastMealTime:"10:13",nextMealTime: "12:34"}
     ]
     )
