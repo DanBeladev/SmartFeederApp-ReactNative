@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity  } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity,ActivityIndicator  } from 'react-native';
 import Modal from 'react-native-modal';
 import DogComponent from './DogComponent';
+import * as firebase from 'firebase';
 import dogAvatar from '../../assets/noDogImg.jpg'
 import {getAllUserDogs} from '../../severSimulator/allUsersDog'
 import addBtn from '../../assets/PngItem_1121197.png'
@@ -13,17 +14,29 @@ export default class DogsScreen extends React.Component {
   constructor(props){
     super(props);
     this.state={
+      isLoaded:false,
       allUserDogs:[],
       isModalVisible:false,
+      currentUserID:''
     }
     this.onAddClick=this.onAddClick.bind(this);
     this.formCallBack=this.formCallBack.bind(this);
     this.buildForm=this.buildForm.bind(this);
   }
   componentDidMount() {
-    let allUserDogs=getAllUserDogs();
-    this.setState({allUserDogs:allUserDogs})
-    console.log('hi');
+    firebase.database().ref('Users/').once('value').then((snapshot)=>{
+      let mo=snapshot.val();
+      let keys=Object.keys(snapshot.val());
+      for(let i=0;i<keys.length;i++){
+        if(mo[keys[i]].email==this.props.email){ 
+          console.log(mo[keys[i]]);
+          let dogsList=mo[keys[i]].dogsList?mo[keys[i]].dogsList:[];
+          this.setState({currentUserID:keys[i],allUserDogs:dogsList, isLoaded:true});
+          console.log(mo[keys[i]].dogsList);
+          break;
+        }
+      } 
+    });
   }
   buildForm(){
     let fields=([
@@ -33,19 +46,17 @@ export default class DogsScreen extends React.Component {
       {type:'pic', field:"dogImg", labelVisibale:false, title:"add pic"}
     ]); 
     return <Form fields={fields} callBack={this.formCallBack}></Form>
- 
   }
 
   formCallBack(fieldsToValue){
-    console.log(fieldsToValue);
     let newDogImage=fieldsToValue.dogImg?fieldsToValue.dogImg:dogAvatar;
       const newDog={
         dogImg:newDogImage,
         dogName:fieldsToValue.dogName
       }
-      let newAllUserDogs=[...this.state.allUserDogs];
+      let newAllUserDogs=[...this.state.allUserDogs]; 
       newAllUserDogs.push(newDog);
-      console.log(newAllUserDogs); //remove this
+      firebase.database().ref('Users/'+this.state.currentUserID+'/dogsList').set(newAllUserDogs);
       const lastModalState=this.state.isModalVisible;
       this.setState({isModalVisible:!lastModalState,allUserDogs:newAllUserDogs});  
   }
@@ -58,16 +69,20 @@ export default class DogsScreen extends React.Component {
     return (
       <View style={styles.container}>
         <Header />
+        {
+        this.state.isLoaded?
         <View style={styles.dogs}>
-            {this.state.allUserDogs.map(v=><DogComponent key={v.dogName} 
+            {this.state.allUserDogs.length>0?this.state.allUserDogs.map(v=><DogComponent key={v.dogName} 
                                         dogImg={v.dogImg} 
                                         dogName={v.dogName} 
                                         lastMealTime={v.lastMealTime} 
-                                        nextMealTime={v.nextMealTime} />)}
+                                        nextMealTime={v.nextMealTime} />):
+                                        <Text style={styles.noDogsText}>You don't have any dogs</Text>}
             <TouchableOpacity onPress={this.onAddClick}>
               <Image source={addBtn} style={styles.addBtn} />
             </TouchableOpacity>
-        </View>
+        </View>:<ActivityIndicator style={styles.loader} size="large" />
+  }
         <Modal isVisible={this.state.isModalVisible}>
           {this.buildForm()}
         </Modal>
@@ -99,6 +114,12 @@ const styles = StyleSheet.create({
     height:50,
     position:'relative',
     left:'42%'
+  },
+  loader:{
+    top:"30%"
+  },
+  noDogsText: {
+    fontSize:30
   }
   
 });

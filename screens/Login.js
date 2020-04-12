@@ -40,7 +40,7 @@ export default class Login extends Component {
       .auth()
       .signInWithEmailAndPassword(this.state.email, this.state.password)
       .then(() => {
-        this.setState({isLoggedIn:false},()=>{ Actions.home();});
+        this.setState({isLoggedIn:false},()=>{ Actions.home({email:this.state.email});});
       })
       .catch((err) => {this.setState({ errorMessage: err.message })
                         this.setState({isLoggedIn:false});
