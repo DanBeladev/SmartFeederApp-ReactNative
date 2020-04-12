@@ -12,7 +12,7 @@ import * as constants from '../common/constants';
 import { Actions } from 'react-native-router-flux';
 import * as firebase from 'firebase';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default class Login extends Component {
   state = {
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     padding: 20,
     marginTop: 10,
     alignItems: 'center',
-    // flex: 1,
+    flex: 1,
     backgroundColor: '#71C8B3',
   },
   img: {

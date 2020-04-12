@@ -1,31 +1,23 @@
-import React, {useState} from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity  } from 'react-native';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 import Modal from 'react-native-modal';
 import DogComponent from './DogComponent';
 import dogAvatar from '../../assets/noDogImg.jpg'
 import {getAllUserDogs} from '../../severSimulator/allUsersDog'
-import addBtn from '../../assets/PngItem_1121197.png'
-import Header from  '../../generalComponents/Header/Header'
 import Form from '../../generalComponents/Templates/Form/Form';
+import ActionButton from 'react-native-action-button';
 
 
 export default class DogsScreen extends React.Component {
-  constructor(props){
-    super(props);
-    this.state={
+state={
       allUserDogs:[],
       isModalVisible:false,
     }
-    this.onAddClick=this.onAddClick.bind(this);
-    this.formCallBack=this.formCallBack.bind(this);
-    this.buildForm=this.buildForm.bind(this);
-  }
   componentDidMount() {
     let allUserDogs=getAllUserDogs();
     this.setState({allUserDogs:allUserDogs})
-    console.log('hi');
   }
-  buildForm(){
+  buildForm = () =>{
     let fields=([
       {type:"text", field:"dogName", title:"dog name", labelVisibale:true},
       {type:"radio", field:"gender", title:"gender", labelVisibale:true, radioProps: [{label: 'male     ', value: 0 },{label: 'female', value: 1 }]},
@@ -36,7 +28,7 @@ export default class DogsScreen extends React.Component {
  
   }
 
-  formCallBack(fieldsToValue){
+  formCallBack = (fieldsToValue) =>{
     console.log(fieldsToValue);
     let newDogImage=fieldsToValue.dogImg?fieldsToValue.dogImg:dogAvatar;
       const newDog={
@@ -49,7 +41,7 @@ export default class DogsScreen extends React.Component {
       const lastModalState=this.state.isModalVisible;
       this.setState({isModalVisible:!lastModalState,allUserDogs:newAllUserDogs});  
   }
-  onAddClick(){
+  onAddClick = () =>{
     const lastModalState=this.state.isModalVisible;
     this.setState({isModalVisible:!lastModalState});
   }
@@ -57,31 +49,25 @@ export default class DogsScreen extends React.Component {
   render(){
     return (
       <View style={styles.container}>
-        <Header />
         <View style={styles.dogs}>
-            {this.state.allUserDogs.map(v=><DogComponent key={v.dogName} 
-                                        dogImg={v.dogImg} 
-                                        dogName={v.dogName} 
-                                        lastMealTime={v.lastMealTime} 
-                                        nextMealTime={v.nextMealTime} />)}
-            <TouchableOpacity onPress={this.onAddClick}>
-              <Image source={addBtn} style={styles.addBtn} />
-            </TouchableOpacity>
+            {this.state.allUserDogs.map(dog=><DogComponent key={dog.dogName} dog = {dog}/>)}
         </View>
-        <Modal isVisible={this.state.isModalVisible}>
+        <Modal isVisible={this.state.isModalVisible}
+        onBackdropPress = {() => {this.setState({isModalVisible: !this.state.isModalVisible})}} >
           {this.buildForm()}
         </Modal>
-      </View>
+            <ActionButton position="center" size={70} buttonColor="green" onPress= {this.onAddClick} />
+        </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#7FA1F5',
+    backgroundColor: '#71C8B3',
     alignItems: 'center',
     justifyContent:'flex-start',
-    flex:1
+    flex:1,
   },
   header:{
     marginTop:25,
@@ -92,14 +78,17 @@ const styles = StyleSheet.create({
     flexDirection:"column",
     width:"90%",
     height:350,
-    margin:20,
   },
   addBtn:{
     width:50,
     height:50,
     position:'relative',
     left:'42%'
-  }
+  },
+  scrollView: {
+    backgroundColor: 'pink',
+    marginHorizontal: 20,
+  },
   
 });
  
