@@ -6,12 +6,13 @@ import {
   Image,
   TextInput,
   TouchableWithoutFeedback,
+  ActivityIndicator,
 } from 'react-native';
 import * as constants from '../common/constants';
 import { Actions } from 'react-native-router-flux';
 import * as firebase from 'firebase';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
 export default class Login extends Component {
   state = {
@@ -34,19 +35,22 @@ export default class Login extends Component {
   };
 
   onLoginPressed = () => {
+    this.setState({isLoggedIn: true});
     firebase
       .auth()
       .signInWithEmailAndPassword(this.state.email, this.state.password)
       .then(() => {
-        Actions.home();
+        this.setState({isLoggedIn:false},()=>{ Actions.home();});
       })
-      .catch((err) => this.setState({ errorMessage: err.message }));
+      .catch((err) => {this.setState({ errorMessage: err.message })
+                        this.setState({isLoggedIn:false});
+    });
   };
 
   render() {
     return (
       <KeyboardAwareScrollView>
-        <View style={styles.screen}>
+       <View style={styles.screen}>
           <Image
             style={styles.img}
             source={require('../assets/hand.png')}
@@ -83,9 +87,8 @@ export default class Login extends Component {
             )}
           </View>
           <View style={styles.loginContainer}>
-            <Text style={styles.loginBtn} onPress={this.onLoginPressed}>
-              Login
-            </Text>
+          {this.state.isLoggedIn?  <ActivityIndicator size ="large" /> :
+          <TouchableOpacity><Text style={styles.loginBtn} onPress={this.onLoginPressed}>Login</Text></TouchableOpacity>}
           </View>
           <TouchableWithoutFeedback onPress={this.onRegisterHandler}>
             <Text style={styles.register}>
