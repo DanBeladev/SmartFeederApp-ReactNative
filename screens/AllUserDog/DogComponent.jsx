@@ -37,7 +37,7 @@ const style=StyleSheet.create({
     container: {
         backgroundColor:"#fffff9",
         flexDirection:"row",
-        height:250,
+        height:140,
         width: "100%",
         padding:20,
         justifyContent:'space-between',
@@ -47,30 +47,34 @@ const style=StyleSheet.create({
         
     },
     image:{
+        bottom:10,
         height:150,
+        width:100,
         maxHeight:"100%",
-        maxWidth:"80%",
+        maxWidth:"100%",
         borderRadius:100,
+        right:10
     },
     innerText: {
         justifyContent:'space-between',
-        marginVertical:10
+        marginVertical:10,
+        alignItems:"flex-start",
     },
 
     leftSide:{
-        flex:1,
         flexDirection:'column',
+        alignItems:'stretch'
     },
 
     dogName:{
-        fontSize:25,
+        fontSize:20,
         fontWeight: 'bold',
         color:'blue',
         textAlign:'center',
-        width:"80%",
+        width:"100%",
         height:30,
-        marginTop:10,
-        marginBottom:20,
+        bottom:12,
+        right:10
     },
 
     text: {

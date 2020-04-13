@@ -1,21 +1,41 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, {useState} from 'react';
+import { StyleSheet, View, Text, Image, TouchableOpacity,ActivityIndicator  } from 'react-native';
 import Modal from 'react-native-modal';
 import DogComponent from './DogComponent';
+import * as firebase from 'firebase';
 import dogAvatar from '../../assets/noDogImg.jpg'
 import {getAllUserDogs} from '../../severSimulator/allUsersDog'
-import Form from '../../generalComponents/Templates/Form/Form';
+import addBtn from '../../assets/PngItem_1121197.png'
+import Header from  '../../generalComponents/Header/Header';
 import ActionButton from 'react-native-action-button';
-
+import Form from '../../generalComponents/Templates/Form/Form';
 
 export default class DogsScreen extends React.Component {
-state={
+  constructor(props){
+    super(props);
+    this.state={
+      isLoaded:false,
       allUserDogs:[],
       isModalVisible:false,
+      currentUserID:''
     }
+    console.log(this.props.mail); 
+  }
   componentDidMount() {
-    let allUserDogs=getAllUserDogs();
-    this.setState({allUserDogs:allUserDogs})
+    firebase.database().ref('Users/').once('value').then((snapshot)=>{
+      let mo=snapshot.val();
+      console.log(this.props);
+      let keys=Object.keys(snapshot.val());
+      for(let i=0;i<keys.length;i++){
+        if(mo[keys[i]].email==this.props.email){ 
+          console.log(mo[keys[i]]);
+          let dogsList=mo[keys[i]].dogsList?mo[keys[i]].dogsList:[];
+          this.setState({currentUserID:keys[i],allUserDogs:dogsList, isLoaded:true});
+          console.log(mo[keys[i]].dogsList);
+          break;
+        }
+      } 
+    });
   }
   buildForm = () =>{
     let fields=([
@@ -25,19 +45,17 @@ state={
       {type:'pic', field:"dogImg", labelVisibale:false, title:"add pic"}
     ]); 
     return <Form fields={fields} callBack={this.formCallBack}></Form>
- 
   }
 
   formCallBack = (fieldsToValue) =>{
-    console.log(fieldsToValue);
     let newDogImage=fieldsToValue.dogImg?fieldsToValue.dogImg:dogAvatar;
       const newDog={
         dogImg:newDogImage,
         dogName:fieldsToValue.dogName
       }
-      let newAllUserDogs=[...this.state.allUserDogs];
+      let newAllUserDogs=[...this.state.allUserDogs]; 
       newAllUserDogs.push(newDog);
-      console.log(newAllUserDogs); //remove this
+      firebase.database().ref('Users/'+this.state.currentUserID+'/dogsList').set(newAllUserDogs);
       const lastModalState=this.state.isModalVisible;
       this.setState({isModalVisible:!lastModalState,allUserDogs:newAllUserDogs});  
   }
@@ -49,11 +67,15 @@ state={
   render(){
     return (
       <View style={styles.container}>
+        {
+        this.state.isLoaded?
         <View style={styles.dogs}>
-            {this.state.allUserDogs.map(dog=><DogComponent key={dog.dogName} dog = {dog}/>)}
-        </View>
-        <Modal isVisible={this.state.isModalVisible}
-        onBackdropPress = {() => {this.setState({isModalVisible: !this.state.isModalVisible})}} >
+            {this.state.allUserDogs.length>0?this.state.allUserDogs.map((dog)=>
+                                              <DogComponent key={dog.dogName} dog = {dog}/>):
+                                        <Text style={styles.noDogsText}>You don't have any dogs</Text>}
+        </View>:<ActivityIndicator style={styles.loader} size="large" />
+  }
+        <Modal isVisible={this.state.isModalVisible}>
           {this.buildForm()}
         </Modal>
             <ActionButton position="center" size={70} buttonColor="green" onPress= {this.onAddClick} />
@@ -85,10 +107,12 @@ const styles = StyleSheet.create({
     position:'relative',
     left:'42%'
   },
-  scrollView: {
-    backgroundColor: 'pink',
-    marginHorizontal: 20,
+  loader:{
+    top:"30%"
   },
+  noDogsText: {
+    fontSize:30
+  }
   
 });
  

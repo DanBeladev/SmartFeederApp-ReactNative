@@ -38,7 +38,8 @@ export default class SignInScreen extends Component {
     firebase.database().ref('Users/').push({
       email: this.state.email,
       phone: this.state.phone,
-      name: this.state.fullName
+      name: this.state.fullName,
+      dogsList:[]
   }).then((data)=>{
       //success callback
       console.log('data ' , data)
@@ -55,7 +56,7 @@ export default class SignInScreen extends Component {
       .then(()=> {   
       this.createUser();
       Alert.alert('addded succesfully');
-      Actions.home();})
+      Actions.home({email:this.state.email});})
       .catch((err) => this.setState({errorMessage: err.message}));
     }
     else
