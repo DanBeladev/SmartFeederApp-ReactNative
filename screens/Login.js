@@ -116,12 +116,11 @@ const mapStateToProps = (state) => {
   }
 }
 const mapDispatchToProps = (dispatch) => {
-  async function momo(userID){
-    dispatch(signInUser(userID));
-  }
   return{
-    setUser: momo
-  } 
+    setUser: (userID)=>{
+      dispatch(signInUser(userID));
+    }
+  }
 }
 
 export default connect(mapStateToProps,mapDispatchToProps) (Login);
