@@ -1,20 +1,14 @@
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TextInput,
-  TouchableWithoutFeedback,
-  ActivityIndicator,
-} from 'react-native';
+import { connect } from 'react-redux'
+import { View, Text, StyleSheet, Image, TextInput, TouchableWithoutFeedback, ActivityIndicator } from 'react-native';
 import * as constants from '../common/constants';
 import { Actions } from 'react-native-router-flux';
+import {signInUser} from '../actions/usersActions'
 import * as firebase from 'firebase';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-export default class Login extends Component {
+class Login extends Component {
   state = {
     email: '',
     password: '',
@@ -35,23 +29,36 @@ export default class Login extends Component {
   };
 
   onLoginPressed = () => {
-    this.setState({isLoggedIn: true});
+    this.setState({ isLoggedIn: true });
     firebase
       .auth()
       .signInWithEmailAndPassword(this.state.email, this.state.password)
       .then(() => {
-        this.setState({isLoggedIn:false});
-        Actions.home({email:this.state.email});
+        let userID=3;
+        firebase.database().ref('Users/').once('value').then((snapshot)=>{
+          let mo=snapshot.val()
+          let keys=Object.keys(snapshot.val());
+          for(let i=0;i<keys.length;i++){
+            if(mo[keys[i]].email==this.state.email){
+              userID=keys[i];
+              await this.props.setUser(keys[i]);
+              break;
+            }
+          } 
+        });
+        this.setState({ isLoggedIn: false }, ()=>{Actions.home();});
       })
-      .catch((err) => {this.setState({ errorMessage: err.message })
-                        this.setState({isLoggedIn:false});
-    });
+      .catch((err) => {
+        this.setState({ errorMessage: err.message })
+        this.setState({ isLoggedIn: false });
+      });
   };
 
   render() {
+    console.log(this.props.user);
     return (
       <KeyboardAwareScrollView>
-       <View style={styles.screen}>
+        <View style={styles.screen}>
           <Image
             style={styles.img}
             source={require('../assets/hand.png')}
@@ -88,8 +95,8 @@ export default class Login extends Component {
             )}
           </View>
           <View style={styles.loginContainer}>
-          {this.state.isLoggedIn?  <ActivityIndicator size ="large" /> :
-          <TouchableOpacity><Text style={styles.loginBtn} onPress={this.onLoginPressed}>Login</Text></TouchableOpacity>}
+            {this.state.isLoggedIn ? <ActivityIndicator size="large" /> :
+              <TouchableOpacity><Text style={styles.loginBtn} onPress={this.onLoginPressed}>Login</Text></TouchableOpacity>}
           </View>
           <TouchableWithoutFeedback onPress={this.onRegisterHandler}>
             <Text style={styles.register}>
@@ -102,6 +109,22 @@ export default class Login extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    user: state.user
+  }
+}
+const mapDispatchToProps = (dispatch) => {
+  async function momo(userID){
+    dispatch(signInUser(userID));
+  }
+  return{
+    setUser: momo
+  } 
+}
+
+export default connect(mapStateToProps,mapDispatchToProps) (Login);
 
 const styles = StyleSheet.create({
   screen: {

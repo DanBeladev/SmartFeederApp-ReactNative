@@ -1,118 +1,122 @@
-import React, {useState} from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity,ActivityIndicator  } from 'react-native';
+import React, { useState } from 'react';
+import {connect} from 'react-redux'
+import { StyleSheet, View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import Modal from 'react-native-modal';
 import DogComponent from './DogComponent';
 import * as firebase from 'firebase';
 import dogAvatar from '../../assets/noDogImg.jpg'
-import {getAllUserDogs} from '../../severSimulator/allUsersDog'
+import { getAllUserDogs } from '../../severSimulator/allUsersDog'
 import addBtn from '../../assets/PngItem_1121197.png'
-import Header from  '../../generalComponents/Header/Header';
+import Header from '../../generalComponents/Header/Header';
 import ActionButton from 'react-native-action-button';
 import Form from '../../generalComponents/Templates/Form/Form';
 
-export default class DogsScreen extends React.Component {
-  constructor(props){
+class DogsScreen extends React.Component {
+  constructor(props) {
     super(props);
-    this.state={
-      isLoaded:false,
-      allUserDogs:[],
-      isModalVisible:false,
-      currentUserID:''
+    this.state = {
+      isLoaded: false,
+      allUserDogs: [],
+      isModalVisible: false,
+      currentUserID: ''
     }
-    console.log(this.props.mail); 
+    console.log(this.props.mail);
   }
   componentDidMount() {
-    firebase.database().ref('Users/').once('value').then((snapshot)=>{
-      let mo=snapshot.val();
-      console.log(this.props);
-      let keys=Object.keys(snapshot.val());
-      for(let i=0;i<keys.length;i++){
-        if(mo[keys[i]].email==this.props.email){ 
-          console.log(mo[keys[i]]);
-          let dogsList=mo[keys[i]].dogsList?mo[keys[i]].dogsList:[];
-          this.setState({currentUserID:keys[i],allUserDogs:dogsList, isLoaded:true});
-          console.log(mo[keys[i]].dogsList);
-          break;
-        }
-      } 
+    console.log("in did");
+    console.log(this.props.user.userID);
+    firebase.database().ref('Users/'+this.props.user.userID).once('value').then((snapshot)=>{
+      let user=snapshot.val();
+      this.setState({allUserDogs:user.dogsList,isLoaded:true});  
     });
   }
-  buildForm = () =>{
-    let fields=([
-      {type:"text", field:"dogName", title:"dog name", labelVisibale:true},
-      {type:"radio", field:"gender", title:"gender", labelVisibale:true, radioProps: [{label: 'male     ', value: 0 },{label: 'female', value: 1 }]},
-      {type:'combo', field:"age", title:"age",labelVisibale:true, data:[{label:"1",value:1}, {label:"2",value:2}, {label:"3",value:3}, {label:"4",value:4}]},
-      {type:'pic', field:"dogImg", labelVisibale:false, title:"add pic"}
-    ]); 
+  buildForm = () => {
+    let fields = ([
+      { type: "text", field: "dogName", title: "dog name", labelVisibale: true },
+      { type: "radio", field: "gender", title: "gender", labelVisibale: true, radioProps: [{ label: 'male     ', value: 0 }, { label: 'female', value: 1 }] },
+      { type: 'combo', field: "age", title: "age", labelVisibale: true, data: [{ label: "1", value: 1 }, { label: "2", value: 2 }, { label: "3", value: 3 }, { label: "4", value: 4 }] },
+      { type: 'pic', field: "dogImg", labelVisibale: false, title: "add pic" }
+    ]);
     return <Form fields={fields} callBack={this.formCallBack}></Form>
   }
 
-  formCallBack = (fieldsToValue) =>{
-    let newDogImage=fieldsToValue.dogImg?fieldsToValue.dogImg:dogAvatar;
-      const newDog={
-        dogImg:newDogImage,
-        dogName:fieldsToValue.dogName
-      }
-      let newAllUserDogs=[...this.state.allUserDogs]; 
-      newAllUserDogs.push(newDog);
-      firebase.database().ref('Users/'+this.state.currentUserID+'/dogsList').set(newAllUserDogs);
-      const lastModalState=this.state.isModalVisible;
-      this.setState({isModalVisible:!lastModalState,allUserDogs:newAllUserDogs});  
+  formCallBack = (fieldsToValue) => {
+    let newDogImage = fieldsToValue.dogImg ? fieldsToValue.dogImg : dogAvatar;
+    const newDog = {
+      dogImg: newDogImage,
+      dogName: fieldsToValue.dogName
+    }
+    let newAllUserDogs = [...this.state.allUserDogs];
+    newAllUserDogs.push(newDog);
+    firebase.database().ref('Users/' + this.state.currentUserID + '/dogsList').set(newAllUserDogs);
+    const lastModalState = this.state.isModalVisible;
+    this.setState({ isModalVisible: !lastModalState, allUserDogs: newAllUserDogs });
   }
-  onAddClick = () =>{
-    const lastModalState=this.state.isModalVisible;
-    this.setState({isModalVisible:!lastModalState});
+  onAddClick = () => {
+    const lastModalState = this.state.isModalVisible;
+    this.setState({ isModalVisible: !lastModalState });
   }
 
-  render(){
+  render() {
     return (
       <View style={styles.container}>
         {
-        this.state.isLoaded?
-        <View style={styles.dogs}>
-            {this.state.allUserDogs.length>0?this.state.allUserDogs.map((dog)=>
-                                              <DogComponent key={dog.dogName} dog = {dog}/>):
-                                        <Text style={styles.noDogsText}>You don't have any dogs</Text>}
-        </View>:<ActivityIndicator style={styles.loader} size="large" />
-  }
+          this.state.isLoaded ?
+            <View style={styles.dogs}>
+              {this.state.allUserDogs.length > 0 ? this.state.allUserDogs.map((dog) =>
+                <DogComponent key={dog.dogName} dog={dog} />) :
+                <Text style={styles.noDogsText}>You don't have any dogs</Text>}
+            </View> : <ActivityIndicator style={styles.loader} size="large" />
+        }
         <Modal isVisible={this.state.isModalVisible}>
           {this.buildForm()}
         </Modal>
-            <ActionButton position="center" size={70} buttonColor="green" onPress= {this.onAddClick} />
-        </View>
+        <ActionButton position="center" size={70} buttonColor="green" onPress={this.onAddClick} />
+      </View>
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    user:state.user
+  }
+}
+
+export default connect(mapStateToProps)(DogsScreen)
+
+
+
+
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#71C8B3',
     alignItems: 'center',
-    justifyContent:'flex-start',
-    flex:1,
+    justifyContent: 'flex-start',
+    flex: 1,
   },
-  header:{
-    marginTop:25,
-    position:"relative",
-    fontSize:35
+  header: {
+    marginTop: 25,
+    position: "relative",
+    fontSize: 35
   },
-  dogs:{
-    flexDirection:"column",
-    width:"90%",
-    height:350,
+  dogs: {
+    flexDirection: "column",
+    width: "90%",
+    height: 350,
   },
-  addBtn:{
-    width:50,
-    height:50,
-    position:'relative',
-    left:'42%'
+  addBtn: {
+    width: 50,
+    height: 50,
+    position: 'relative',
+    left: '42%'
   },
-  loader:{
-    top:"30%"
+  loader: {
+    top: "30%"
   },
   noDogsText: {
-    fontSize:30
+    fontSize: 30
   }
-  
+
 });
- 

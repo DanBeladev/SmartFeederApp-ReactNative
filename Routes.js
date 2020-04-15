@@ -18,12 +18,20 @@ export default class Routes extends Component {
     render(){
         return(
             <Router>
-            <Stack key="root" hideNavBar={true}>
-                <Scene key="login" component={Login} title="Login" />
-                <Scene key="register" component={SignInScreen} title="Register" />
-                <Scene key="home" component={DogsScreen} title="Dogs" />
-            </Stack>
-        </Router>
+                <Stack key="root" hideNavBar={true}>
+                    <Scene key="login" component={Login} title="Login" />
+                    <Drawer navigationBarStyle={styles.drawer} key="drawerMenu" hideNavBar contentComponent={SideMenu}>
+                        <Scene key="home"  initial component={DogsScreen} title="Dogs" />
+                        <Scene key="test" component={Header} title="test" />
+                    </Drawer>
+                    <Drawer navigationBarStyle={styles.dogDrawer} key="dogMenu" hideNavBar contentComponent={DogSideMenu} >
+                        <Scene key="dogManagement"  initial component={DogManagment} />
+                        <Scene key="settings" component={Settings} title="Settings" />
+                        <Scene key="statistics" component={Statistics} title="Statistics" />
+                    </Drawer>
+                    <Scene key="register" component={SignInScreen} title="Register" />
+                </Stack>
+            </Router>
         )
     }
 }
