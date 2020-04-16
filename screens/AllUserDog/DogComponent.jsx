@@ -6,7 +6,6 @@ import { Actions } from "react-native-router-flux";
 export default class DogComponent extends React.Component{
     dogPressed = () => {
         const {dog} = this.props;
-        console.log('in dog component before transform' , dog)
         Actions.dogManagement({dog});
     }
     render(){

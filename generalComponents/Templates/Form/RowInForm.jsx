@@ -2,8 +2,7 @@ import React, { Component } from "react";
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
-import { Dropdown } from 'react-native-material-dropdown';
+import RadioForm from 'react-native-simple-radio-button';
 import {View,  Text, Button, StyleSheet, Picker, TextInput} from "react-native";
 
 export default class RowInForm extends React.Component{
@@ -29,11 +28,9 @@ export default class RowInForm extends React.Component{
           });
           if (!result.cancelled) {
             this.image= result.uri;
-            console.log(result.uri);
             this.props.onGettingValue({uri:this.image},this.props.params.field)
           }
     
-          console.log(result);
         } catch (E) {
           console.log(E);
         }

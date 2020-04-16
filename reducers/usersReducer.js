@@ -1,14 +1,21 @@
-export default usersReducers= (state={userID:undefined}, action)=>{
-    switch(action.type){
-        case "SET_CURRENT_USERID":
-            state={
-                userID:action.payload
-            }
-            break;
-        case "SIGN_OUT":
-            state={
-                user:undefined
-            }    
+const initialState = {
+  userID: undefined,
+};
+
+export default usersReducers = (state = initialState, action) => {
+  switch (action.type) {
+    case 'SET_CURRENT_USERID':
+      return (state = {
+        userID: action.payload,
+      });
+    case 'SIGN_OUT':
+      return (state = {
+        user: undefined,
+      });
+      case 'GET_USERID':
+        return (state = {
+          userID: state.userID,
+        });
     }
-    return state;
-}
+  return state;
+};

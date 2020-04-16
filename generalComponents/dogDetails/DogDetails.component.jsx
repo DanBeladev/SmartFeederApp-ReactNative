@@ -1,5 +1,5 @@
 import React from "react";
-import {View,  Text,  StyleSheet, Image, TextInput, TouchableWithoutFeedback} from "react-native";
+import {View,  Text,  StyleSheet} from "react-native";
 
 export default class DogDetails extends React.Component{
     constructor(props){
@@ -7,7 +7,6 @@ export default class DogDetails extends React.Component{
     }
 
     render(){
-        const { dog } = this.props;
         return(
             <View style={styles.container}>
                 <Text>hey</Text>
