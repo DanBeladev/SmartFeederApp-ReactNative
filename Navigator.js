@@ -9,6 +9,7 @@ import SignInScreen from './screens/SignInScreen';
 import DogsScreen from './screens/AllUserDog/DogsScreen';
 import Header from './generalComponents/Header/Header';
 import SideMenu from './generalComponents/sideBar/sideBarMenu.component';
+import DrawerContent from './generalComponents/sideBar/testSideBar';
 import { connect } from 'react-redux';
 
 const Stack = createStackNavigator();
@@ -34,9 +35,12 @@ function LoginStack() {
 
 function HomeDrawer() {
   return (
-    <UserDrawer.Navigator initialRouteName='Home' drawerContent={props => <SideMenu {...props} />}> 
-      <UserDrawer.Screen options={{}} name='Home' component={DogsScreen} />
-      <UserDrawer.Screen name='Fucker' component={Header} />
+    <UserDrawer.Navigator initialRouteName='Home' 
+    // drawerContent={props => <SideMenu {...props} />}
+    drawerContent={(props) => <DrawerContent {...props}/>}
+    > 
+      <UserDrawer.Screen options={{ headerTitle: 'Twitter' }} name='Home' component={DogsScreen} />
+      <UserDrawer.Screen options={{ headerTitle: 'rami' }} name='Fucker' component={Header} />
     </UserDrawer.Navigator>
   );
 }
