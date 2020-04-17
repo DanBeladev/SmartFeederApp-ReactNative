@@ -103,7 +103,7 @@ class DogsScreen extends React.Component {
           <View style={styles.dogs}>
             {this.state.allUserDogs.length > 0 ? (
               this.state.allUserDogs.map((dog) => (
-                <DogComponent key={dog.dogName} dog={dog} />
+                <DogComponent key={dog.dogName} dog={dog} {...this.props}/>
               ))
             ) : (
               <Text style={styles.noDogsText}>You don't have any dogs</Text>
@@ -112,7 +112,9 @@ class DogsScreen extends React.Component {
         ) : (
           <ActivityIndicator style={styles.loader} size='large' />
         )}
-        <Modal isVisible={this.state.isModalVisible}>{this.buildForm()}</Modal>
+        <Modal 
+        onBackdropPress={()=>{this.setState({isModalVisible: false })}}
+         isVisible={this.state.isModalVisible}>{this.buildForm()}</Modal>
         <ActionButton
           position='center'
           size={70}

@@ -4,3 +4,9 @@ export function signInUser(userID){
         payload:userID
     };
 }
+
+export function signOut(){
+    return{
+        type:"SIGN_OUT",
+    };
+}

@@ -1,12 +1,14 @@
-import React from "react";
+import React, { Component } from "react";
 import {View,Text,StyleSheet,Image,TextInput,TouchableWithoutFeedback, Alert} from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Actions } from "react-native-router-flux";
 
-export default class DogComponent extends React.Component{
+ export default class DogComponent extends Component{
     dogPressed = () => {
-        const {dog} = this.props;
-        Actions.dogManagement({dog});
+        console.log('hello');
+        this.props.navigation.toggleDrawer();
+        // const {dog} = this.props;
+        // Actions.dogManagement({dog})
     }
     render(){
         const { dog } = this.props;
@@ -31,6 +33,7 @@ export default class DogComponent extends React.Component{
         );
     }
 }
+
 
 const style=StyleSheet.create({
     container: {

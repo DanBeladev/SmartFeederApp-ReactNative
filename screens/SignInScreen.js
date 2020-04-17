@@ -66,12 +66,14 @@ export default class SignInScreen extends Component {
   };
 
   backPressed = () => {
-    Actions.pop();
+    // Actions.pop();
+    this.props.navigation.goBack();
   };
 
   render() {
+    const { email, pass } = this.props.route.params;
+    console.log(email,pass)
     return (
-      <KeyboardAwareScrollView>
       <View style={styles.screen}>
         <TouchableOpacity
           style={styles.backContainer}
@@ -136,7 +138,6 @@ export default class SignInScreen extends Component {
           </Text>
         </View>
       </View>
-      </KeyboardAwareScrollView>
     );
   }
 }

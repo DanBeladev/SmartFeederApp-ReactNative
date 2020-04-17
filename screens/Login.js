@@ -23,17 +23,21 @@ class Login extends Component {
     errorMessage: null,
     isLoggedIn: false,
   };
-
+  
   onEmailChangeHandler = (selectedEmail) => {
     this.setState({ email: selectedEmail });
   };
-
+  
   onPasswordChangedHandler = (selectedPassword) => {
     this.setState({ password: selectedPassword });
   };
 
   onRegisterHandler = () => {
-    Actions.register();
+    // Actions.register();
+    this.props.navigation.navigate('SignIn', {
+      email: '123'
+      ,pass: '456'
+    });
   };
 
   onLoginPressed = () => {
@@ -58,9 +62,7 @@ class Login extends Component {
               }
             }
           });
-        this.setState({ isLoggedIn: false }, () => {
-          Actions.home();
-        });
+        this.setState({ isLoggedIn: false });
       })
       .catch((err) => {
         this.setState({ errorMessage: err.message });
@@ -139,7 +141,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setUser: (userID) => {
       dispatch(signInUser(userID));
-    },
+    }
   };
 };
 
