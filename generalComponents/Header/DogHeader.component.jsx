@@ -1,39 +1,39 @@
-import React from "react";
-import {View,  Text,  StyleSheet, Image, TextInput, TouchableWithoutFeedback} from "react-native";
+import * as React from 'react';
+import { Avatar, Appbar } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { backgroundColor, headerHeight } from '../../common/constants';
 
-export default class DogHeader extends React.Component{
-    constructor(props){
-        super(props);
-    }
+export default class DogHeader extends React.Component {
+  menuClicked = () => {
+    const { navigation } = this.props;
+    navigation.openDrawer();
+  };
 
-    render(){
-        const { dog } = this.props;
-        return(
-            <View style={styles.container}>
-                <Image source={dog.dogImg} style={styles.menu} />
-                <Text style ={styles.name}>{dog.dogName}</Text>
-            </View>
-        );
-    }
+  render() {
+    return (
+      <Appbar style={styles.top}>
+        <Appbar.Action icon='menu' onPress={this.menuClicked} />
+        <Avatar.Image
+          style={styles.headerImg}
+          size={100}
+          source={require('../../assets/hand.png')}
+        />
+      </Appbar>
+    );
+  }
 }
 
-const styles=StyleSheet.create({
-    container: {
-        flexDirection:'column',
-        flex:1,
-        backgroundColor:'white',
-        width:'100%',
-        maxHeight:130,
-    },
-    menu: {
-        alignSelf:"center",
-        borderRadius:100,
-        width:100,
-        height:100,
-    },
-    name: {
-        textAlign:"center",
-        fontSize: 20,
-        fontWeight:"bold"
-    }
-})
+const styles = StyleSheet.create({
+  top: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    height: headerHeight,
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+    backgroundColor: backgroundColor,
+  },
+  headerImg: { position: 'absolute', left: '40%', bottom: -50 },
+});

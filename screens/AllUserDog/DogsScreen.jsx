@@ -1,19 +1,14 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
+import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
 import Modal from 'react-native-modal';
 import DogComponent from './DogComponent';
 import * as firebase from 'firebase';
 import dogAvatar from '../../assets/noDogImg.jpg';
 import ActionButton from 'react-native-action-button';
 import Form from '../../generalComponents/Templates/Form/Form';
+import Header from '../../generalComponents/Header/Header';
+import { backgroundColor, headerHeight } from '../../common/constants';
 
 class DogsScreen extends React.Component {
   constructor(props) {
@@ -34,7 +29,7 @@ class DogsScreen extends React.Component {
       .once('value')
       .then((snapshot) => {
         let user = snapshot.val();
-        console.log('user? ', user)
+        console.log('user? ', user);
         this.setState({ allUserDogs: user.dogsList, isLoaded: true });
       });
   }
@@ -83,7 +78,7 @@ class DogsScreen extends React.Component {
     newAllUserDogs.push(newDog);
     firebase
       .database()
-      .ref('Users/' + this.state.userDetails.userID + '/dogsList')
+      .ref('Users/' + this.props.user.userDetails.userID + '/dogsList')
       .set(newAllUserDogs);
     const lastModalState = this.state.isModalVisible;
     this.setState({
@@ -91,19 +86,20 @@ class DogsScreen extends React.Component {
       allUserDogs: newAllUserDogs,
     });
   };
+
   onAddClick = () => {
-    const lastModalState = this.state.isModalVisible;
-    this.setState({ isModalVisible: !lastModalState });
+    this.setState({ isModalVisible: !this.state.isModalVisible });
   };
 
   render() {
     return (
       <View style={styles.container}>
+        <Header {...this.props} />
         {this.state.isLoaded ? (
           <View style={styles.dogs}>
             {this.state.allUserDogs.length > 0 ? (
               this.state.allUserDogs.map((dog) => (
-                <DogComponent key={dog.dogName} dog={dog} {...this.props}/>
+                <DogComponent key={dog.dogName} dog={dog} {...this.props} />
               ))
             ) : (
               <Text style={styles.noDogsText}>You don't have any dogs</Text>
@@ -112,9 +108,14 @@ class DogsScreen extends React.Component {
         ) : (
           <ActivityIndicator style={styles.loader} size='large' />
         )}
-        <Modal 
-        onBackdropPress={()=>{this.setState({isModalVisible: false })}}
-         isVisible={this.state.isModalVisible}>{this.buildForm()}</Modal>
+        <Modal
+          onBackdropPress={() => {
+            this.setState({ isModalVisible: false });
+          }}
+          isVisible={this.state.isModalVisible}
+        >
+          {this.buildForm()}
+        </Modal>
         <ActionButton
           position='center'
           size={70}
@@ -132,12 +133,11 @@ const mapStateToProps = (state) => {
   };
 };
 
-
 export default connect(mapStateToProps)(DogsScreen);
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#71C8B3',
+    backgroundColor: backgroundColor,
     alignItems: 'center',
     justifyContent: 'flex-start',
     flex: 1,
@@ -150,13 +150,8 @@ const styles = StyleSheet.create({
   dogs: {
     flexDirection: 'column',
     width: '90%',
-    height: 350,
-  },
-  addBtn: {
-    width: 50,
-    height: 50,
-    position: 'relative',
-    left: '42%',
+    height: 100,
+    top: headerHeight,
   },
   loader: {
     top: '30%',
