@@ -11,9 +11,9 @@ import {
 import Modal from 'react-native-modal';
 import DogComponent from './DogComponent';
 import * as firebase from 'firebase';
-import dogAvatar from '../../assets/noDogImg.jpg';
 import ActionButton from 'react-native-action-button';
 import Form from '../../generalComponents/Templates/Form/Form';
+import {uploadImage} from '../../generalComponents/Utils'
 
 class DogsScreen extends React.Component {
   constructor(props) {
@@ -24,18 +24,28 @@ class DogsScreen extends React.Component {
       isModalVisible: false,
       currentUserID: '',
     };
+    this.storage=firebase.storage().ref();
+    this.dataBase=firebase.database();
   }
   componentDidMount() {
-    const { userID } = this.props.user.userDetails;
-    console.log('userID:', userID);
-    firebase
-      .database()
-      .ref('Users/' + userID)
-      .once('value')
-      .then((snapshot) => {
+    const { userID,name } = this.props.user.userDetails;
+    let prevAllUserDogs=this.state.allUserDogs;
+    this.dataBase.ref('Users/' + userID).once('value').then((snapshot) => {
         let user = snapshot.val();
-        console.log('user? ', user)
-        this.setState({ allUserDogs: user.dogsList, isLoaded: true });
+        let newAllUserDogs=user.dogsList?user.dogsList:[];
+        this.setState({allUserDogs:newAllUserDogs, isLoaded:true});
+        if(user.dogsList){
+          user.dogsList.forEach((v,index)=>{
+            this.storage.child("images/"+name+"/"+user.dogsList[index].dogName+"Profile")
+            .getDownloadURL().then((url)=>{
+              let prevDogsList=[...this.state.allUserDogs];
+              console.log(prevDogsList); 
+              prevDogsList[index].dogImg=url;
+              console.log(prevDogsList);
+              this.setState({allUserDogs:prevDogsList});
+            }).catch((error)=>{console.log(error)})
+          })
+        }
       });
   }
   buildForm = () => {
@@ -43,30 +53,26 @@ class DogsScreen extends React.Component {
       {
         type: 'text',
         field: 'dogName',
-        title: 'dog name',
+        title: 'Dog Name',
+        isMandetory:true,
         labelVisibale: true,
       },
       {
         type: 'radio',
         field: 'gender',
-        title: 'gender',
+        title: 'Gender',
         labelVisibale: true,
         radioProps: [
-          { label: 'male     ', value: 0 },
-          { label: 'female', value: 1 },
+          { label: 'Male     ', value: 0 },
+          { label: 'Female', value: 1 },
         ],
       },
       {
-        type: 'combo',
+        type: 'text',
         field: 'age',
-        title: 'age',
+        title: 'Age',
         labelVisibale: true,
-        data: [
-          { label: '1', value: 1 },
-          { label: '2', value: 2 },
-          { label: '3', value: 3 },
-          { label: '4', value: 4 },
-        ],
+        valueType:"Integer"
       },
       { type: 'pic', field: 'dogImg', labelVisibale: false, title: 'add pic' },
     ];
@@ -74,17 +80,26 @@ class DogsScreen extends React.Component {
   };
 
   formCallBack = (fieldsToValue) => {
-    let newDogImage = fieldsToValue.dogImg ? fieldsToValue.dogImg : dogAvatar;
+    const { userID,name } = this.props.user.userDetails;
+    let newDogImage = fieldsToValue.dogImg;
+    if(fieldsToValue.dogImg){
+      uploadImage(fieldsToValue.dogImg.uri,name+"/"+fieldsToValue.dogName+"Profile");
+    }
     const newDog = {
-      dogImg: newDogImage,
       dogName: fieldsToValue.dogName,
     };
-    let newAllUserDogs = [...this.state.allUserDogs];
-    newAllUserDogs.push(newDog);
-    firebase
-      .database()
-      .ref('Users/' + this.state.userDetails.userID + '/dogsList')
-      .set(newAllUserDogs);
+    let newAllUserDogs = this.state.allUserDogs;
+    newAllUserDogs=newAllUserDogs.filter(v=>v!=undefined);
+    newAllUserDogs.push({...newDog, dogImg:newDogImage});
+    this.dataBase.ref('Users/' + userID).once('value').then((snapshot) => {
+        let user = snapshot.val();
+        let newDogArray=user.dogsList?[...user.dogsList]:[];
+        newDogArray.push(newDog);
+        firebase
+          .database()
+          .ref('Users/' + this.props.user.userDetails.userID + '/dogsList').set(newDogArray);
+      })
+    
     const lastModalState = this.state.isModalVisible;
     this.setState({
       isModalVisible: !lastModalState,
@@ -95,17 +110,14 @@ class DogsScreen extends React.Component {
     const lastModalState = this.state.isModalVisible;
     this.setState({ isModalVisible: !lastModalState });
   };
-
   render() {
     return (
       <View style={styles.container}>
         {this.state.isLoaded ? (
           <View style={styles.dogs}>
             {this.state.allUserDogs.length > 0 ? (
-              this.state.allUserDogs.map((dog) => (
-                <DogComponent key={dog.dogName} dog={dog} {...this.props}/>
-              ))
-            ) : (
+              this.state.allUserDogs.map((dog) => 
+                <DogComponent key={dog.dogName} dog={dog} {...this.props}/>)):(
               <Text style={styles.noDogsText}>You don't have any dogs</Text>
             )}
           </View>

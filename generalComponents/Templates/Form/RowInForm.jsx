@@ -44,7 +44,6 @@ export default class RowInForm extends React.Component{
         }
       }
     render(){
-
         if(!this.props.params){
             return "";
         }
@@ -74,7 +73,11 @@ export default class RowInForm extends React.Component{
             case "button":
                 this.elem=<Button title={this.props.params.title} onPress={()=>this.props.params.pickImage()}></Button>    
         }
-        return <View style={styles.container}><Text>{this.props.params.labelVisibale?this.props.params.title+":  ":""}</Text>{this.elem}</View>
+        return (<View style={styles.container}>
+                    <Text>{this.props.params.labelVisibale?this.props.params.title:""}</Text>
+                    {<Text style={{color:"red", paddingRight:20}}>{this.props.params.isMandetory?"*":""}</Text>}
+                    {this.elem}
+                </View>)
     }
 }
 

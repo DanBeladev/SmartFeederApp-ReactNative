@@ -2,22 +2,25 @@ import React, { Component } from "react";
 import {View,Text,StyleSheet,Image,TextInput,TouchableWithoutFeedback, Alert} from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Actions } from "react-native-router-flux";
+import dogAvatar from '../../assets/noDogImg.jpg';
 
  export default class DogComponent extends Component{
     dogPressed = () => {
         console.log('hello');
         this.props.navigation.toggleDrawer();
-        // const {dog} = this.props;
-        // Actions.dogManagement({dog})
     }
     render(){
         const { dog } = this.props;
+    
         return (
             <TouchableOpacity style={style.container} onPress={this.dogPressed}>
                 <View style={style.leftSide}>
-                    <Image style={style.image} source={dog.dogImg}></Image>
+                    {dog.dogImg?
+                    <Image style={style.image} source={dog.dogImg instanceof Object?dog.dogImg:{uri:dog.dogImg}}></Image>:
+                    <Image style={style.image} source={dogAvatar}></Image>
+                    }       
                     <Text style={style.dogName}>{dog.dogName}</Text>
-                </View>
+                </View> 
                 <View style={style.innerText}>
                     <Text style={style.text}>
                         <Text>Last Meal: </Text>
