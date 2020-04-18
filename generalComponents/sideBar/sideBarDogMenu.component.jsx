@@ -1,117 +1,165 @@
-import React from "react";
-import {View,  Text,  StyleSheet, Image, TextInput, TouchableWithoutFeedback} from "react-native";
-import { Icon } from 'react-native-elements';
-import { Actions } from "react-native-router-flux";
-import * as firebase from 'firebase';
-import { TouchableOpacity } from "react-native-gesture-handler";
-export default class DogSideMenu extends React.Component{
-    constructor(props){
-        super(props);
-  this.items = [
-    {
-      navOptionThumb: 'camera',
-      navOptionName: 'Details',
-      screenToNavigate: 'dogManagement',
-      fireFunction: this.details
-    },
-    {
-      navOptionThumb: 'build',
-      navOptionName: 'Statistics',
-      screenToNavigate: 'statistics',
-      fireFunction: this.statisticsHandler
-    },
-    {
-        navOptionThumb: 'build',
-        navOptionName: 'Settings',
-        screenToNavigate: 'settings',
-        fireFunction: this.statisticsHandler
-      },
-    {
-        navOptionThumb: 'build',
-        navOptionName: 'Logout',
-        screenToNavigate: 'login',
-        fireFunction: this.logoutHandler
-      },
-  ];
-}
-details = (screenToNavigate) =>{
-    Actions[screenToNavigate].call();
-}
+import React, { Component } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { DrawerItem, DrawerContentScrollView } from '@react-navigation/drawer';
+import { Avatar, Title, Caption, Drawer } from 'react-native-paper';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { connect } from 'react-redux';
+import { signOut } from '../../actions/usersActions';
 
-statisticsHandler = (screenToNavigate) =>{
-    Actions[screenToNavigate].call();
-    }
-
-logoutHandler = (screenToNavigate) => {
-    firebase.auth().signOut().then(()=> Actions.reset(screenToNavigate))
-    .catch((err) => console.log('logout failed - ',err));
-}
-
-render() {
+class DrawerContent extends Component {
+  render() {
     return (
-      <View style={styles.sideMenuContainer}>
-        {/*Top Large Image */}
-        <Image
-          source={require('../../assets/hand.png')}
-          style={styles.sideMenuProfileIcon}
-        />
-        {/*Divider between Top Image and Sidebar Option*/}
-        <View
-          style={{
-            width: '100%',
-            height: 1,
-            backgroundColor: '#e2e2e2',
-            marginTop: 15,
-          }}
-        />
-        {/*Setting up Navigation Options from option array using loop*/}
-        <View style={{ width: '100%' }}>
-        
-          {this.items.map((item, key) => (
-            <TouchableOpacity
-            onPress={()=>item.fireFunction(item.screenToNavigate)}
-            key={key}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingTop: 10,
-                paddingBottom: 10,
-                backgroundColor: global.currentScreenIndex === key ? '#e0dbdb' : '#ffffff',
+      <DrawerContentScrollView {...this.props}>
+        <View style={styles.drawerContent}>
+          <View style={styles.userInfoSection} style={{ alignSelf: 'center' }}>
+            <Avatar.Image
+              source={require('../../assets/hand.png')}
+              size={120}
+            />
+            <Title style={styles.title}>Nala</Title>
+            <Caption style={styles.caption}>Border Colley</Caption>
+            <Caption style={styles.caption}>4 years@ Female</Caption>
+          </View>
+          <Drawer.Section style={styles.drawerSection}>
+            <DrawerItem
+              icon={({ color, size }) => (
+                <MaterialCommunityIcons name='dog' color={color} size={size} />
+              )}
+              label='Dog'
+              onPress={() => {
+                this.props.navigation.navigate('DogDetails');
               }}
-              >
-              <View style={{ marginRight: 10, marginLeft: 20 }}>
-                <Icon name={item.navOptionThumb} size={25} color="#808080" />
-              </View>
-              <Text
-                style={{
-                  fontSize: 20,
-                  color: global.currentScreenIndex === key ? 'red' : 'black',
-                }}
-               >
-                {item.navOptionName}
-              </Text>
-            </View>
-            </TouchableOpacity>
-          ))}
+            />
+            <DrawerItem
+              icon={({ color, size }) => (
+                <MaterialCommunityIcons
+                  name='chart-line'
+                  color={color}
+                  size={size}
+                />
+              )}
+              label='Statistics'
+              onPress={() => {
+                console.log('Statistics');
+              }}
+            />
+            <DrawerItem
+              icon={({ color, size }) => (
+                <MaterialCommunityIcons
+                  name='folder-text'
+                  color={color}
+                  size={size}
+                />
+              )}
+              label='Hisunim'
+              onPress={() => {
+                this.props.navigation.navigate('Hisunim');
+              }}
+            />
+            <DrawerItem
+              icon={({ color, size }) => (
+                <MaterialCommunityIcons name='bone' color={color} size={size} />
+              )}
+              label='How Much Left?'
+              onPress={() => {
+                console.log('How Much Left?');
+              }}
+            />
+          </Drawer.Section>
+          <Drawer.Section>
+            <DrawerItem
+              icon={({ color, size }) => (
+                <MaterialCommunityIcons
+                  name='volume-high'
+                  color={color}
+                  size={size}
+                />
+              )}
+              label='Make Noise'
+              onPress={() => {
+                console.log('Make NOISE');
+              }}
+            />
+          </Drawer.Section>
+          <Drawer.Section>
+            <DrawerItem
+              icon={({ color, size }) => (
+                <MaterialCommunityIcons name='cogs' color={color} size={size} />
+              )}
+              label='Settings'
+              onPress={() => {
+                console.log('Settings');
+              }}
+            />
+          </Drawer.Section>
+          <Drawer.Section>
+            <DrawerItem
+              icon={({ color, size }) => (
+                <MaterialCommunityIcons name='home' color={color} size={size} />
+              )}
+              label='Home'
+              onPress={() => {
+                this.props.navigation.jumpTo('Home');
+              }}
+            />
+          </Drawer.Section>
         </View>
-      </View>
+      </DrawerContentScrollView>
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    user: state.user,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    Logout: () => {
+      dispatch(signOut());
+    },
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(DrawerContent);
+
 const styles = StyleSheet.create({
-  sideMenuContainer: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    paddingTop: 20,
+  drawerContent: {
+    flex: 1,
   },
-  sideMenuProfileIcon: {
-    width: 150,
-    height: 150,
+  userInfoSection: {
+    paddingLeft: 20,
+  },
+  title: {
     marginTop: 20,
-    borderRadius: 150 / 2,
-    backgroundColor: 'black'
+    fontWeight: 'bold',
+  },
+  caption: {
+    fontSize: 14,
+    lineHeight: 14,
+  },
+  row: {
+    marginTop: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  section: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 15,
+  },
+  paragraph: {
+    fontWeight: 'bold',
+    marginRight: 3,
+  },
+  drawerSection: {
+    marginTop: 15,
+  },
+  preference: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
   },
 });

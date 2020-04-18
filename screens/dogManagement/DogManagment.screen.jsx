@@ -9,6 +9,7 @@ export default class DogManagment extends React.Component {
     return (
       <View style={style.container}>
         <DogHeader
+          {...this.props}
           dog={{ dogName: 'Nala', dogImg: require('../../assets/hand.png') }}
         />
         <DogDetails />

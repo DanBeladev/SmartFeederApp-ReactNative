@@ -1,62 +1,64 @@
 import React, { Component } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import {
-  createStackNavigator,
-} from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Login from './screens/Login';
 import SignInScreen from './screens/SignInScreen';
 import DogsScreen from './screens/AllUserDog/DogsScreen';
 import Header from './generalComponents/Header/Header';
-import SideMenu from './generalComponents/sideBar/sideBarMenu.component';
 import DrawerContent from './generalComponents/sideBar/testSideBar';
+import DogDrawerContent from './generalComponents/sideBar/sideBarDogMenu.component';
 import { connect } from 'react-redux';
+import DogManagment from './screens/dogManagement/DogManagment.screen';
+import Settings from './screens/dogManagement/Settings.screen';
+import Statistics from './screens/dogManagement/Statistics.screen';
+import HisunimScreen from './screens/dogManagement/Hisunim.screen';
 
 const Stack = createStackNavigator();
 const UserDrawer = createDrawerNavigator();
+const DogDrawer = createDrawerNavigator();
 
-function LogoTitle() {
+function LoginStack() {
   return (
-    <Image
-      style={{ width: 50, height: 50 }}
-      source={require('./assets/hand.png')}
-    />
+    <Stack.Navigator initialRouteName='Login'>
+      <Stack.Screen name='Login' component={Login} />
+      <Stack.Screen name='SignIn' component={SignInScreen} />
+    </Stack.Navigator>
   );
 }
 
-function LoginStack() {
-    return (
-        <Stack.Navigator initialRouteName='Login'>
-        <Stack.Screen name='Login' component={Login} />
-        <Stack.Screen name='SignIn' component={SignInScreen} />
-      </Stack.Navigator>
-    )
+function DogManagemnetDrawer() {
+  return (
+    <DogDrawer.Navigator
+      initialRouteName='DogDetails'
+      drawerContent={(props) => <DogDrawerContent {...props} />}
+    >
+      <DogDrawer.Screen name='DogDetails' component={DogManagment} />
+      <DogDrawer.Screen name='Hisunim' component={HisunimScreen} />
+      <DogDrawer.Screen name='Settings' component={Settings} />
+      <DogDrawer.Screen name='Statistics' component={Statistics} />
+    </DogDrawer.Navigator>
+  );
 }
 
 function HomeDrawer() {
   return (
-    <UserDrawer.Navigator initialRouteName='Home' 
-    // drawerContent={props => <SideMenu {...props} />}
-    drawerContent={(props) => <DrawerContent {...props}/>}
-    > 
-      <UserDrawer.Screen options={{ headerTitle: 'Twitter' }} name='Home' component={DogsScreen} />
-      <UserDrawer.Screen options={{ headerTitle: 'rami' }} name='Fucker' component={Header} />
+    <UserDrawer.Navigator
+      initialRouteName='Home'
+      drawerContent={(props) => <DrawerContent {...props} />}
+    >
+      <UserDrawer.Screen name='Home' component={DogsScreen} />
+      <UserDrawer.Screen name='Fucker' component={Header} />
+      <UserDrawer.Screen name='DogManagement' component={DogManagemnetDrawer} />
     </UserDrawer.Navigator>
   );
 }
 
 class Navigator extends Component {
-  state = {
-    isSignIn: true,
-  };
   render() {
     return (
       <NavigationContainer>
-        {this.props.user.isSignIn ? (
-          <HomeDrawer />
-        ) : (
-            <LoginStack />
-        )}
+        {this.props.user.isSignIn ? <HomeDrawer /> : <LoginStack />}
       </NavigationContainer>
     );
   }
