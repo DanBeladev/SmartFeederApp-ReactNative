@@ -26,7 +26,7 @@ class DogsScreen extends React.Component {
     };
   }
   componentDidMount() {
-    const { userID } = this.props.user;
+    const { userID } = this.props.user.userDetails;
     console.log('userID:', userID);
     firebase
       .database()
@@ -83,7 +83,7 @@ class DogsScreen extends React.Component {
     newAllUserDogs.push(newDog);
     firebase
       .database()
-      .ref('Users/' + this.state.userID + '/dogsList')
+      .ref('Users/' + this.state.userDetails.userID + '/dogsList')
       .set(newAllUserDogs);
     const lastModalState = this.state.isModalVisible;
     this.setState({

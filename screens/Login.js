@@ -57,7 +57,13 @@ class Login extends Component {
             for (let i = 0; i < keys.length; i++) {
               if (mo[keys[i]].email == this.state.email) {
                 userID = keys[i];
-                this.props.setUser(userID);
+                const userDetails = {
+                  userID: userID,
+                  email: mo[userID].email,
+                  name: mo[userID].name,
+                  phone: mo[userID].phone
+                }
+                this.props.setUser(userDetails);
                 break;
               }
             }

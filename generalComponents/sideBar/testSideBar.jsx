@@ -5,7 +5,6 @@ import {
   DrawerContentScrollView,
 } from '@react-navigation/drawer';
 import {
-  useTheme,
   Avatar,
   Title,
   Caption,
@@ -17,9 +16,12 @@ import {
 } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
+import { signOut } from '../../actions/usersActions';
 
 class DrawerContent extends Component{
 render(){
+
+  const {userDetails} = this.props.user;
   return (
     <DrawerContentScrollView {...this.props}>
       <View
@@ -27,30 +29,14 @@ render(){
           styles.drawerContent
         }
       >
-        <View style={styles.userInfoSection}>
+        <View style={styles.userInfoSection} style={{alignSelf:'center'}}>
           <Avatar.Image
-            source={{
-              uri:
-                'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
-            }}
-            size={50}
+            source={require('../../assets/hand.png')}
+            size={120}
           />
-          <Title style={styles.title}>{this.props.user.userID}/* Dawid Urbaniak */</Title>
-          <Caption style={styles.caption}>@trensik</Caption>
-          <View style={styles.row}>
-            <View style={styles.section}>
-              <Paragraph style={[styles.paragraph, styles.caption]}>
-                202
-              </Paragraph>
-              <Caption style={styles.caption}>Following</Caption>
-            </View>
-            <View style={styles.section}>
-              <Paragraph style={[styles.paragraph, styles.caption]}>
-                159
-              </Paragraph>
-              <Caption style={styles.caption}>Followers</Caption>
-            </View>
-          </View>
+          <Title style={styles.title}>{userDetails.name}</Title>
+          <Caption style={styles.caption}>{userDetails.email}</Caption>
+          <Caption style={styles.caption}>{userDetails.phone}</Caption>
         </View>
         <Drawer.Section style={styles.drawerSection}>
           <DrawerItem
@@ -71,35 +57,20 @@ render(){
             label="Preferences"
             onPress={() => {this.props.navigation.jumpTo('Fucker')}}
           />
-          <DrawerItem
+        </Drawer.Section>
+
+        <Drawer.Section>
+        <DrawerItem
             icon={({ color, size }) => (
               <MaterialCommunityIcons
-                name="bookmark-outline"
+                name="exit-to-app"
                 color={color}
                 size={size}
               />
             )}
-            label="Bookmarks"
-            onPress={() => {}}
+            label="Logout"
+            onPress={() => {this.props.Logout()}}
           />
-        </Drawer.Section>
-        <Drawer.Section title="Preferences">
-          <TouchableRipple onPress={() => {}}>
-            <View style={styles.preference}>
-              <Text>Dark Theme</Text>
-              <View pointerEvents="none">
-                <Switch value={false} />
-              </View>
-            </View>
-          </TouchableRipple>
-          <TouchableRipple onPress={() => {}}>
-            <View style={styles.preference}>
-              <Text>RTL</Text>
-              <View pointerEvents="none">
-                <Switch value={false} />
-              </View>
-            </View>
-          </TouchableRipple>
         </Drawer.Section>
       </View>
     </DrawerContentScrollView>
@@ -113,7 +84,14 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(DrawerContent);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    Logout: () => {
+      dispatch(signOut());
+    }
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(DrawerContent);
 
 const styles = StyleSheet.create({
   drawerContent: {
