@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import {setDog} from '../../actions/dogsActions';
 import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
 import Modal from 'react-native-modal';
 import DogComponent from './DogComponent';
@@ -24,7 +25,6 @@ class DogsScreen extends React.Component {
   }
   componentDidMount() {
     const { userID,name } = this.props.user.userDetails;
-    let prevAllUserDogs=this.state.allUserDogs;
     this.dataBase.ref('Users/' + userID).once('value').then((snapshot) => {
         let user = snapshot.val();
         let newAllUserDogs=user.dogsList?user.dogsList:[];
@@ -34,9 +34,7 @@ class DogsScreen extends React.Component {
             this.storage.child("images/"+name+"/"+user.dogsList[index].dogName+"Profile")
             .getDownloadURL().then((url)=>{
               let prevDogsList=[...this.state.allUserDogs];
-              console.log(prevDogsList); 
               prevDogsList[index].dogImg=url;
-              console.log(prevDogsList);
               this.setState({allUserDogs:prevDogsList});
             }).catch((error)=>{console.log(error)})
           })
@@ -102,18 +100,27 @@ class DogsScreen extends React.Component {
     });
   };
 
+  callBackForDogChoosing=(dog)=>{
+    this.props.setDog(dog)
+  }
+
   onAddClick = () => {
     this.setState({ isModalVisible: !this.state.isModalVisible });
   };
+
   render() {
+    console.log(this.state.allUserDogs);
     return (
       <View style={styles.container}>
         <Header {...this.props} />
         {this.state.isLoaded ? (
           <View style={styles.dogs}>
             {this.state.allUserDogs.length > 0 ? (
-              this.state.allUserDogs.map((dog) => 
-                <DogComponent key={dog.dogName} dog={dog} {...this.props}/>)):(
+              this.state.allUserDogs.map((dog) =>{ 
+                console.log("hereee")
+                console.log(dog.dogImg);
+              return <DogComponent key={dog.dogName}
+               dog={dog} callBack={this.callBackForDogChoosing} navigation={this.props.navigation} />})):(
               <Text style={styles.noDogsText}>You don't have any dogs</Text>
             )}
           </View>
@@ -144,8 +151,15 @@ const mapStateToProps = (state) => {
     user: state.user,
   };
 };
+const mapDispatchToProps=(dispatch)=>{
+  return{
+      setDog:(dog)=>{
+          dispatch(setDog(dog));
+      }
+  }
+}
 
-export default connect(mapStateToProps)(DogsScreen);
+export default connect(mapStateToProps,mapDispatchToProps)(DogsScreen);
 
 const styles = StyleSheet.create({
   container: {

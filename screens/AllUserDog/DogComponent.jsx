@@ -10,10 +10,12 @@ import dogAvatar from '../../assets/noDogImg.jpg';
 
 export default class DogComponent extends Component {
   dogPressed = () => {
+    this.props.callBack(this.props.dog);
     this.props.navigation.navigate('DogManagement', {
       screen: 'DogDetails',
     });
   };
+
   render() {
     const { dog } = this.props;
     return (
@@ -47,6 +49,8 @@ export default class DogComponent extends Component {
     );
   }
 }
+
+
 
 const style = StyleSheet.create({
   container: {

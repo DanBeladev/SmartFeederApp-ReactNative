@@ -71,8 +71,6 @@ export default class SignInScreen extends Component {
   };
 
   render() {
-    const { email, pass } = this.props.route.params;
-    console.log(email,pass)
     return (
       <View style={styles.screen}>
         <TouchableOpacity

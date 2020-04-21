@@ -16,7 +16,7 @@ export default class DogHeader extends React.Component {
         <Avatar.Image
           style={styles.headerImg}
           size={100}
-          source={require('../../assets/hand.png')}
+          source={this.props.dog.dogImg}
         />
       </Appbar>
     );
