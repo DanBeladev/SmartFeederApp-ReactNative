@@ -67,9 +67,9 @@ class DogsScreen extends React.Component {
         labelVisibale: true,
         valueType:"Integer"
       },
-      { type: 'pic', field: 'dogImg', labelVisibale: false, title: 'add pic' },
+      { type: 'pic', field: 'dogImg', labelVisibale: false, title: 'upload picture' },
     ];
-    return <Form fields={fields} callBack={this.formCallBack}></Form>;
+    return <Form fields={fields} callBack={this.formCallBack} closeForm ={()=>{this.setState({isModalVisible: false})}}></Form>;
   };
 
   formCallBack = (fieldsToValue) => {

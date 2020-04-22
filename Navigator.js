@@ -20,7 +20,9 @@ const DogDrawer = createDrawerNavigator();
 
 function LoginStack() {
   return (
-    <Stack.Navigator initialRouteName='Login'>
+    <Stack.Navigator initialRouteName='Login'screenOptions={{
+      headerShown: false
+    }}>
       <Stack.Screen name='Login' component={Login} />
       <Stack.Screen name='SignIn' component={SignInScreen} />
     </Stack.Navigator>
