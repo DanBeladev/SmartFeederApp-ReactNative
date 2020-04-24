@@ -16,7 +16,7 @@ class DrawerContent extends Component {
               source={require('../../assets/hand.png')}
               size={120}
             />
-            <Title style={styles.title}>Nala</Title>
+            <Title style={styles.title}>{this.props.dog.dogName}</Title>
             <Caption style={styles.caption}>Border Colley</Caption>
             <Caption style={styles.caption}>4 years@ Female</Caption>
           </View>
@@ -112,6 +112,7 @@ class DrawerContent extends Component {
 const mapStateToProps = (state) => {
   return {
     user: state.user,
+    dog:state.dog.currentDog
   };
 };
 

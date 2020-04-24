@@ -33,8 +33,6 @@ export default class Form extends React.Component{
                     result=false;
                 }
             }
-            console.log(v);
-            console.log(this.state.fieldsToValue[v.field])
             if(v.isMandetory && !this.state.fieldsToValue[v.field] ){
                 this.setState({errorMessage:`"${v.title}" has to be filled`});
                 result=false

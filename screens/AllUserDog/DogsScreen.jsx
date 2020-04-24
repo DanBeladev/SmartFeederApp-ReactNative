@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import {setDog} from '../../actions/dogsActions';
-import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, ActivityIndicator, Button } from 'react-native';
 import Modal from 'react-native-modal';
 import DogComponent from './DogComponent';
 import * as firebase from 'firebase';
@@ -16,30 +16,26 @@ class DogsScreen extends React.Component {
     super(props);
     this.state = {
       isLoaded: false,
-      allUserDogs: [],
+      allUserDogs:[],
       isModalVisible: false,
       currentUserID: '',
     };
     this.storage=firebase.storage().ref();
     this.dataBase=firebase.database();
+    this.counter=0;
   }
   componentDidMount() {
     const { userID,name } = this.props.user.userDetails;
-    this.dataBase.ref('Users/' + userID).once('value').then((snapshot) => {
-        let user = snapshot.val();
-        let newAllUserDogs=user.dogsList?user.dogsList:[];
-        this.setState({allUserDogs:newAllUserDogs, isLoaded:true});
-        if(user.dogsList){
-          user.dogsList.forEach((v,index)=>{
-            this.storage.child("images/"+name+"/"+user.dogsList[index].dogName+"Profile")
-            .getDownloadURL().then((url)=>{
-              let prevDogsList=[...this.state.allUserDogs];
-              prevDogsList[index].dogImg=url;
-              this.setState({allUserDogs:prevDogsList});
-            }).catch((error)=>{console.log(error)})
-          })
-        }
-      });
+    let allDogs=this.state.allUserDogs;
+    firebase.database().ref('Dogs/').orderByChild('ownerID').equalTo(userID).on('value',snapshot=>{
+      let index=0;
+      snapshot.forEach((dogFromDb)=>{
+        if(dogFromDb){
+        const dog=dogFromDb.val();
+        allDogs.push(dog);
+      }}) 
+      this.setState({isLoaded:true, allUserDogs:allDogs});
+    })
   }
   buildForm = () => {
     let fields = [
@@ -72,53 +68,44 @@ class DogsScreen extends React.Component {
     return <Form fields={fields} callBack={this.formCallBack}></Form>;
   };
 
-  formCallBack = (fieldsToValue) => {
+  formCallBack = (fieldsToValue) => { 
+    let newest=[...this.state.allUserDogs];
+    this.setState({isModalVisible:false});
     const { userID,name } = this.props.user.userDetails;
-    let newDogImage = fieldsToValue.dogImg;
-    if(fieldsToValue.dogImg){
-      uploadImage(fieldsToValue.dogImg.uri,name+"/"+fieldsToValue.dogName+"Profile");
-    }
     const newDog = {
       dogName: fieldsToValue.dogName,
-    };
-    let newAllUserDogs = this.state.allUserDogs;
-    newAllUserDogs=newAllUserDogs.filter(v=>v!=undefined);
-    newAllUserDogs.push({...newDog, dogImg:newDogImage});
-    this.dataBase.ref('Users/' + userID).once('value').then((snapshot) => {
-        let user = snapshot.val();
-        let newDogArray=user.dogsList?[...user.dogsList]:[];
-        newDogArray.push(newDog);
-        firebase
-          .database()
-          .ref('Users/' + this.props.user.userDetails.userID + '/dogsList').set(newDogArray);
-      })
-    
-    const lastModalState = this.state.isModalVisible;
-    this.setState({
-      isModalVisible: !lastModalState,
-      allUserDogs: newAllUserDogs,
-    });
+      ownerID: userID,
+      gender:fieldsToValue.gender?fieldsToValue.gender:0,
+      age:fieldsToValue.age  
+    }; 
+    firebase.database().ref('Dogs/').push(newDog);
+    if(fieldsToValue.dogImg){
+      newDog["dogImg"]=fieldsToValue.dogImg;
+      uploadImage(fieldsToValue.dogImg.uri,userID+"/"+fieldsToValue.dogName+"Profile")
+    }
+    newest.push(newDog);
+    this.setState({allUserDogs: newest,isModalVisible:false});
   };
 
+
   callBackForDogChoosing=(dog)=>{
-    this.props.setDog(dog)
+    this.props.setDog(dog) 
   }
 
   onAddClick = () => {
-    this.setState({ isModalVisible: !this.state.isModalVisible });
+    this.setState({ isModalVisible: true });
   };
 
   render() {
-    console.log(this.state.allUserDogs);
+    const allDogsObj=this.state.allUserDogs;
+
     return (
       <View style={styles.container}>
         <Header {...this.props} />
         {this.state.isLoaded ? (
           <View style={styles.dogs}>
-            {this.state.allUserDogs.length > 0 ? (
-              this.state.allUserDogs.map((dog) =>{ 
-                console.log("hereee")
-                console.log(dog.dogImg);
+            {allDogsObj.length > 0 ? (
+              allDogsObj.map((dog) =>{ 
               return <DogComponent key={dog.dogName}
                dog={dog} callBack={this.callBackForDogChoosing} navigation={this.props.navigation} />})):(
               <Text style={styles.noDogsText}>You don't have any dogs</Text>

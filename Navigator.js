@@ -67,6 +67,7 @@ class Navigator extends Component {
 const mapStateToProps = (state) => {
   return {
     user: state.user,
+    dog:state.dog.currentDog
   };
 };
 export default connect(mapStateToProps)(Navigator);

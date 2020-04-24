@@ -53,6 +53,7 @@ export default class RowInForm extends React.Component{
                         onChangeText={val=>this.props.onGettingValue(val,this.props.params.field)}/>
                 break;
             case "radio":
+                //this.props.onGettingValue(this.props.params.radioProps[0].value,this.props.params.field)
                 this.elem=<RadioForm radio_props={this.props.params.radioProps}
                             initial={0}
                             onPress={(value)=>this.props.onGettingValue(value,this.props.params.field)}
