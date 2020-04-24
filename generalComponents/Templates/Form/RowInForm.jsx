@@ -11,6 +11,7 @@ import {
   TextInput,
 } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Button } from 'react-native-paper';
 
 export default class RowInForm extends React.Component {
   constructor(props) {
@@ -26,6 +27,7 @@ export default class RowInForm extends React.Component {
     this.getPermissionAsync();
   }
   async pickImage() {
+      console.log("huhuhuh");
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -95,9 +97,7 @@ export default class RowInForm extends React.Component {
         break;
       case 'pic':
         this.elem = (
-            <TouchableOpacity onPress={() => this.props.params.pickImage()} style={styles.addPicture}>
-            <Text style={{fontSize:15}}>{this.props.params.title}</Text>
-        </TouchableOpacity>
+            <Button title={this.props.params.title} onPress={() => this.pickImage()} style={styles.addPicture} />
         );
         break;
       case 'button':

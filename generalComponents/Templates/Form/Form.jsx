@@ -53,7 +53,7 @@ export default class Form extends React.Component {
     });
     return result;
   }
-
+  
   render() {
     return (
       <View style={styles.container}>
