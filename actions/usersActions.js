@@ -1,7 +1,7 @@
-export function signInUser(userDetails){
+export function signInUser(user){
     return{
         type:"SET_CURRENT_USERID",
-        payload: userDetails
+        payload: user
     };
 }
 

@@ -1,72 +1,68 @@
-import React, { Component } from "react";
-import { StatusBar, ScrollView, View, Text, StyleSheet, TextInput, Alert } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { Actions } from 'react-native-router-flux';
-import * as firebase from 'firebase';
-import * as constants from '../common/constants'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-export default class SignInScreen extends Component {
+import React, { Component } from 'react';
+import { View, Text, StyleSheet, TextInput } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import * as constants from '../common/constants';
+import { API_INSTANCE } from '../api/api';
+import { connect } from 'react-redux';
+import { signInUser } from '../actions/usersActions';
+
+class SignInScreen extends Component {
   state = {
-    email: "",
-    password: "",
-    phone: "",
-    fullName: "",
-    errorMessage: null
+    email: 'shmueli@gmail.com',
+    password: '12345',
+    phone: '052555555',
+    fullName: 'shaul',
+    errorMessage: null,
   };
 
-  onEmailChangeHandler = selectedEmail => {
+  onEmailChangeHandler = (selectedEmail) => {
     this.setState({ email: selectedEmail });
   };
 
-  onPhoneChangeHandler = selectedNumber => {
+  onPhoneChangeHandler = (selectedNumber) => {
     this.setState({ phone: selectedNumber });
   };
 
-  onFullNameChangeHandler = selectedName => {
+  onFullNameChangeHandler = (selectedName) => {
     this.setState({ fullName: selectedName });
   };
-  onPasswordChangedHandler = selectedPassword => {
+  onPasswordChangedHandler = (selectedPassword) => {
     this.setState({ password: selectedPassword });
   };
 
-  inputValidator = () =>{
-    const isValid = (this.state.fullName && this.state.phone && this.state.email && this.state.password) ? true: false;
-     return isValid;
-  }
+  inputValidator = () => {
+    const isValid =
+      this.state.fullName &&
+      this.state.phone &&
+      this.state.email &&
+      this.state.password
+        ? true
+        : false;
+    return isValid;
+  };
 
-  createUser = () => {
-    firebase.database().ref('Users/').push({
-      email: this.state.email,
-      phone: this.state.phone,
-      name: this.state.fullName,
-      dogsList:[]
-  }).then((data)=>{
-      //success callback
-      console.log('data ' , data)
-  }).catch((error)=>{
-      //error callback
-      console.log('error ' , error)
-  })
-  }
-
-  onSignInPressed = () => {
+  onSignInPressed = async () => {
     const validInput = this.inputValidator();
-    if(validInput){
-      firebase.auth().createUserWithEmailAndPassword(this.state.email,this.state.password)
-      .then(()=> {   
-      this.createUser();
-      Alert.alert('addded succesfully');
-      Actions.home({email:this.state.email});})
-      .catch((err) => this.setState({errorMessage: err.message}));
-    }
-    else
-    {
-      this.setState({errorMessage: 'Please insert details'})
+    if (validInput) {
+      const user = {
+        username: this.state.fullName,
+        phone: this.state.phone,
+        email: this.state.email,
+        password: this.state.password,
+      };
+      const data = await API_INSTANCE.signup(user);
+      if (data.error) {
+        this.setState({ errorMessage: data.error });
+      } else {
+        console.log(data);
+        this.props.setUser(data);
+      }
+    } else {
+      this.setState({ errorMessage: 'Please insert details' });
     }
   };
 
   backPressed = () => {
-    // Actions.pop();
     this.props.navigation.goBack();
   };
 
@@ -81,25 +77,25 @@ export default class SignInScreen extends Component {
         </TouchableOpacity>
         <View style={styles.inputContainer}>
           <TextInput
-            placeholder ="Full Name"
+            placeholder='Full Name'
             style={styles.emailInput}
             blurOnSubmit
-            autoCapitalize="none"
+            autoCapitalize='none'
             autoCorrect={false}
-            onChangeText={text => this.onFullNameChangeHandler(text)}
+            onChangeText={(text) => this.onFullNameChangeHandler(text)}
             value={this.state.fullName}
           />
         </View>
 
         <View style={styles.inputContainer}>
           <TextInput
-            placeholder ="Phone"
+            placeholder='Phone'
             style={styles.emailInput}
-            keyboardType="phone-pad"
+            keyboardType='phone-pad'
             blurOnSubmit
-            autoCapitalize="none"
+            autoCapitalize='none'
             autoCorrect={false}
-            onChangeText={text => this.onPhoneChangeHandler(text)}
+            onChangeText={(text) => this.onPhoneChangeHandler(text)}
             value={this.state.phone}
           />
         </View>
@@ -107,29 +103,31 @@ export default class SignInScreen extends Component {
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.emailInput}
-            placeholder ="Email"
-            keyboardType="email-address"
+            placeholder='Email'
+            keyboardType='email-address'
             blurOnSubmit
-            autoCapitalize="none"
+            autoCapitalize='none'
             autoCorrect={false}
-            onChangeText={text => this.onEmailChangeHandler(text)}
+            onChangeText={(text) => this.onEmailChangeHandler(text)}
             value={this.state.email}
           />
         </View>
         <View style={styles.inputContainer}>
           <TextInput
-            placeholder ="Password"
+            placeholder='Password'
             style={styles.emailInput}
             blurOnSubmit
-            autoCapitalize="none"
+            autoCapitalize='none'
             autoCorrect={false}
-            onChangeText={text => this.onPasswordChangedHandler(text)}
+            onChangeText={(text) => this.onPasswordChangedHandler(text)}
             value={this.state.password}
           />
         </View>
-        <View style = {styles.errorMessage}>
-        {this.state.errorMessage && <Text style = {styles.error}>{this.state.errorMessage}</Text>}
-        </View>  
+        <View style={styles.errorMessage}>
+          {this.state.errorMessage && (
+            <Text style={styles.error}>{this.state.errorMessage}</Text>
+          )}
+        </View>
         <View style={styles.loginContainer}>
           <Text style={styles.loginBtn} onPress={this.onSignInPressed}>
             Sign Up
@@ -140,81 +138,96 @@ export default class SignInScreen extends Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    user: state.user,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setUser: (user) => {
+      dispatch(signInUser(user));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignInScreen);
+
 const styles = StyleSheet.create({
   screen: {
     padding: 20,
     marginTop: 10,
-    alignItems: "center",
+    alignItems: 'center',
     flex: 1,
-    backgroundColor: "#71C8B3"
+    backgroundColor: '#71C8B3',
   },
   img: {
     borderRadius: 100,
     height: 200,
     width: 200,
-    marginVertical: 50
+    marginVertical: 50,
   },
   errorMessage: {
     height: 30,
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 30
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 30,
   },
   error: {
     color: constants.errorColor,
     fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center"
+    fontWeight: '600',
+    textAlign: 'center',
   },
   emailInput: {
-    textAlign: "center",
+    textAlign: 'center',
     height: 50,
     width: 300,
-    maxWidth: "70%",
-    borderBottomColor: "grey",
+    maxWidth: '70%',
+    borderBottomColor: 'grey',
     borderBottomWidth: 3,
     borderWidth: 3,
     borderRadius: 50,
     marginVertical: 10,
-    backgroundColor: "white"
+    backgroundColor: 'white',
   },
   backContainer: {
-    alignContent: "flex-start"
+    alignContent: 'flex-start',
   },
   backBtn: {
-    color: "blue",
+    color: 'blue',
     width: 60,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 50,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 15,
     padding: 5,
-    borderWidth: 2
+    borderWidth: 2,
   },
   inputContainer: {
     flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    marginBottom: 10
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginBottom: 10,
   },
   text: {
     width: 100,
     fontSize: 22,
-    marginEnd: 10
+    marginEnd: 10,
   },
   loginContainer: {
     // flex:1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     width: 300,
     height: 60,
     borderRadius: 100,
-    backgroundColor: "#0F0F0F",
-    marginTop: 50
+    backgroundColor: '#0F0F0F',
+    marginTop: 50,
   },
   loginBtn: {
     fontSize: 22,
-    color: "white"
-  }
+    color: 'white',
+  },
 });

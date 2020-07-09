@@ -1,5 +1,5 @@
 const initialState={
-    currentDog:undefined
+    currentDog: undefined
 }
 
 export default usersReducers = (state = initialState, action) => {

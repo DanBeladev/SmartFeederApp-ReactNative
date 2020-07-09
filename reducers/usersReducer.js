@@ -1,6 +1,6 @@
 const initialState = {
   userDetails: undefined,
-  isSignIn: false
+  isSignIn: false,
 };
 
 export default usersReducers = (state = initialState, action) => {
@@ -8,17 +8,17 @@ export default usersReducers = (state = initialState, action) => {
     case 'SET_CURRENT_USERID':
       return (state = {
         userDetails: action.payload,
-        isSignIn: true
+        isSignIn: true,
       });
     case 'SIGN_OUT':
       return (state = {
         userDetails: undefined,
-        isSignIn: false
+        isSignIn: false,
       });
-      case 'GET_USERID':
-        return (state = {
-          userID: state.userID,
-        });
-    }
+    case 'GET_USERID':
+      return (state = {
+        userID: state.userID,
+      });
+  }
   return state;
 };

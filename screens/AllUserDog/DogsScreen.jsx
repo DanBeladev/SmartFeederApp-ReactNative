@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import {setDog} from '../../actions/dogsActions';
-import { StyleSheet, View, Text, ActivityIndicator, Button } from 'react-native';
+import { setDog } from '../../actions/dogsActions';
+import {
+  StyleSheet,
+  View,
+  Text,
+  ActivityIndicator,
+  Button,
+} from 'react-native';
 import Modal from 'react-native-modal';
 import DogComponent from './DogComponent';
 import * as firebase from 'firebase';
 import ActionButton from 'react-native-action-button';
 import Form from '../../generalComponents/Templates/Form/Form';
-import {uploadImage} from '../../generalComponents/Utils';
+import { uploadImage } from '../../generalComponents/Utils';
 import Header from '../../generalComponents/Header/Header';
 import { backgroundColor, headerHeight } from '../../common/constants';
 
@@ -16,34 +22,43 @@ class DogsScreen extends React.Component {
     super(props);
     this.state = {
       isLoaded: false,
-      allUserDogs:[],
+      allUserDogs: [],
       isModalVisible: false,
       currentUserID: '',
     };
-    this.storage=firebase.storage().ref();
-    this.dataBase=firebase.database();
-    this.counter=0;
+    this.storage = firebase.storage().ref();
+    this.dataBase = firebase.database();
+    this.counter = 0;
   }
   componentDidMount() {
-    const { userID,name } = this.props.user.userDetails;
-    let allDogs=this.state.allUserDogs;
-    firebase.database().ref('Dogs/').orderByChild('ownerID').equalTo(userID).on('value',snapshot=>{
-      let index=0;
-      snapshot.forEach((dogFromDb)=>{
-        if(dogFromDb){
-        const dog=dogFromDb.val();
-        allDogs.push(dog);
-      }}) 
-      this.setState({isLoaded:true, allUserDogs:allDogs});
-    })
+    console.log('in dogs screen',this.props.user.userDetails);
+    // const { userID, name } = this.props.user.userDetails;
+    // let allDogs = this.state.allUserDogs;
+    // firebase
+    //   .database()
+    //   .ref('Dogs/')
+    //   .orderByChild('ownerID')
+    //   .equalTo(userID)
+    //   .on('value', (snapshot) => {
+    //     let index = 0;
+    //     snapshot.forEach((dogFromDb) => {
+    //       if (dogFromDb) {
+    //         const dog = dogFromDb.val();
+    //         allDogs.push(dog);
+    //       }
+    //     });
+    //     this.setState({ isLoaded: true, allUserDogs: allDogs });
+    //   });
+    this.setState({isLoaded:true});
   }
+
   buildForm = () => {
     let fields = [
       {
         type: 'text',
         field: 'dogName',
         title: 'Dog Name',
-        isMandetory:true,
+        isMandetory: true,
         labelVisibale: true,
       },
       {
@@ -61,43 +76,58 @@ class DogsScreen extends React.Component {
         field: 'age',
         title: 'Age',
         labelVisibale: true,
-        valueType:"Integer"
+        valueType: 'Integer',
       },
-      { type: 'pic', field: 'dogImg', labelVisibale: false, title: 'upload picture' },
+      {
+        type: 'pic',
+        field: 'dogImg',
+        labelVisibale: false,
+        title: 'upload picture',
+      },
     ];
-    return <Form fields={fields} callBack={this.formCallBack} closeForm ={()=>{this.setState({isModalVisible: false})}}></Form>;
+    return (
+      <Form
+        fields={fields}
+        callBack={this.formCallBack}
+        closeForm={() => {
+          this.setState({ isModalVisible: false });
+        }}
+      ></Form>
+    );
   };
 
-  formCallBack = (fieldsToValue) => { 
-    let newest=[...this.state.allUserDogs];
-    this.setState({isModalVisible:false});
-    const { userID,name } = this.props.user.userDetails;
+  formCallBack = (fieldsToValue) => {
+    let newest = [...this.state.allUserDogs];
+    this.setState({ isModalVisible: false });
+    const { userID, name } = this.props.user.userDetails;
     const newDog = {
       dogName: fieldsToValue.dogName,
       ownerID: userID,
-      gender:fieldsToValue.gender?fieldsToValue.gender:0,
-      age:fieldsToValue.age  
-    }; 
+      gender: fieldsToValue.gender ? fieldsToValue.gender : 0,
+      age: fieldsToValue.age,
+    };
     firebase.database().ref('Dogs/').push(newDog);
-    if(fieldsToValue.dogImg){
-      newDog["dogImg"]=fieldsToValue.dogImg;
-      uploadImage(fieldsToValue.dogImg.uri,userID+"/"+fieldsToValue.dogName+"Profile")
+    if (fieldsToValue.dogImg) {
+      newDog['dogImg'] = fieldsToValue.dogImg;
+      uploadImage(
+        fieldsToValue.dogImg.uri,
+        userID + '/' + fieldsToValue.dogName + 'Profile'
+      );
     }
     newest.push(newDog);
-    this.setState({allUserDogs: newest,isModalVisible:false});
+    this.setState({ allUserDogs: newest, isModalVisible: false });
   };
 
-
-  callBackForDogChoosing=(dog)=>{
-    this.props.setDog(dog) 
-  }
+  callBackForDogChoosing = (dog) => {
+    this.props.setDog(dog);
+  };
 
   onAddClick = () => {
     this.setState({ isModalVisible: true });
   };
 
   render() {
-    const allDogsObj=this.state.allUserDogs;
+    const allDogsObj = this.state.allUserDogs;
 
     return (
       <View style={styles.container}>
@@ -105,9 +135,17 @@ class DogsScreen extends React.Component {
         {this.state.isLoaded ? (
           <View style={styles.dogs}>
             {allDogsObj.length > 0 ? (
-              allDogsObj.map((dog) =>{ 
-              return <DogComponent key={dog.dogName}
-               dog={dog} callBack={this.callBackForDogChoosing} navigation={this.props.navigation} />})):(
+              allDogsObj.map((dog) => {
+                return (
+                  <DogComponent
+                    key={dog.dogName}
+                    dog={dog}
+                    callBack={this.callBackForDogChoosing}
+                    navigation={this.props.navigation}
+                  />
+                );
+              })
+            ) : (
               <Text style={styles.noDogsText}>You don't have any dogs</Text>
             )}
           </View>
@@ -138,15 +176,15 @@ const mapStateToProps = (state) => {
     user: state.user,
   };
 };
-const mapDispatchToProps=(dispatch)=>{
-  return{
-      setDog:(dog)=>{
-          dispatch(setDog(dog));
-      }
-  }
-}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setDog: (dog) => {
+      dispatch(setDog(dog));
+    },
+  };
+};
 
-export default connect(mapStateToProps,mapDispatchToProps)(DogsScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(DogsScreen);
 
 const styles = StyleSheet.create({
   container: {

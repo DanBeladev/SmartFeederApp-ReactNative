@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { signInUser } from '../actions/usersActions';
 import {
   View,
   Text,
@@ -10,16 +11,14 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import * as constants from '../common/constants';
-import { Actions } from 'react-native-router-flux';
-import { signInUser } from '../actions/usersActions';
-import * as firebase from 'firebase';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { API_URL, API_INSTANCE } from '../api/api';
 
 class Login extends Component {
   state = {
-    email: 'dan@gmail.com', // only for tests
-    password: '123456', // only for tests
+    email: 'shmueli@gmail.com', // only for tests
+    password: '12345', // only for tests
     errorMessage: null,
     isLoggedIn: false,
   };
@@ -36,40 +35,19 @@ class Login extends Component {
     this.props.navigation.navigate('SignIn');
   };
 
-  onLoginPressed = () => {
+  onLoginPressed = async () => {
+    console.log('in login');
     this.setState({ isLoggedIn: true });
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(this.state.email, this.state.password)
-      .then(() => {
-        let userID;
-        firebase
-          .database()
-          .ref('Users/')
-          .once('value')
-          .then((snapshot) => {
-            let mo = snapshot.val();
-            let keys = Object.keys(snapshot.val());
-            for (let i = 0; i < keys.length; i++) {
-              if (mo[keys[i]].email == this.state.email) {
-                userID = keys[i];
-                const userDetails = {
-                  userID: userID,
-                  email: mo[userID].email,
-                  name: mo[userID].name,
-                  phone: mo[userID].phone,
-                };
-                this.props.setUser(userDetails);
-                break;
-              }
-            }
-          });
-        this.setState({ isLoggedIn: false });
-      })
-      .catch((err) => {
-        this.setState({ errorMessage: err.message });
-        this.setState({ isLoggedIn: false });
-      });
+    console.log(`${API_URL}users/login`);
+    const data = await API_INSTANCE.login(
+      this.state.email,
+      this.state.password
+    );
+    if (data.error) {
+      this.setState({ errorMessage: data.error, isLoggedIn: false });
+    } else {
+      this.props.setUser(data.data);
+    }
   };
 
   render() {
@@ -141,8 +119,8 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    setUser: (userID) => {
-      dispatch(signInUser(userID));
+    setUser: (user) => {
+      dispatch(signInUser(user));
     },
   };
 };
