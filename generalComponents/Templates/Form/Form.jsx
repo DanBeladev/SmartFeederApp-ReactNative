@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
 import RowInForm from './RowInForm';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 export default class Form extends React.Component {
   constructor(props) {
@@ -24,7 +19,7 @@ export default class Form extends React.Component {
       <RowInForm
         params={v}
         key={v.title}
-        title= {v.title}
+        title={v.title}
         onGettingValue={this.handleChangingValue}
       ></RowInForm>
     ));
@@ -44,7 +39,6 @@ export default class Form extends React.Component {
           result = false;
         }
       }
-      console.log(v);
       console.log(this.state.fieldsToValue[v.field]);
       if (v.isMandetory && !this.state.fieldsToValue[v.field]) {
         this.setState({ errorMessage: `"${v.title}" has to be filled` });
@@ -53,32 +47,34 @@ export default class Form extends React.Component {
     });
     return result;
   }
-  
+
   render() {
     return (
       <View style={styles.container}>
         {this.buildForm()}
-        <Text style={{ color: 'red', width: '100%', textAlign:"center" }}>
+        <Text style={{ color: 'red', width: '100%', textAlign: 'center' }}>
           {this.state.errorMessage}
         </Text>
         <View style={styles.divider}></View>
         <View style={styles.actionButtons}>
-        <TouchableOpacity
-          style={styles.but}
-          on
-          onPress={() => {
-            if (this.checkValidation()) {
-              this.props.callBack(this.state.fieldsToValue);
-            }
-          }}
-        >
-          <Text style={styles.textBtn}>Add Dog</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.cancelBtn} onPress={this.props.closeForm}>
-          <Text style={styles.textBtn}>Cancel</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.but}
+            on
+            onPress={() => {
+              if (this.checkValidation()) {
+                this.props.callBack(this.state.fieldsToValue);
+              }
+            }}
+          >
+            <Text style={styles.textBtn}>Add Dog</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.cancelBtn}
+            onPress={this.props.closeForm}
+          >
+            <Text style={styles.textBtn}>Cancel</Text>
+          </TouchableOpacity>
         </View>
-  
       </View>
     );
   }
@@ -95,9 +91,9 @@ const styles = StyleSheet.create({
   },
   actionButtons: {
     // flex: 1,
-    width:'70%',
-    justifyContent:"space-between",
-    flexDirection: "row",
+    width: '70%',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
   },
   but: {
     alignSelf: 'center',
@@ -108,12 +104,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     alignItems: 'center',
     borderRadius: 100,
-    borderWidth:2,
-    borderColor: 'black'
+    borderWidth: 2,
+    borderColor: 'black',
   },
-  divider:{width:'100%', height:2, backgroundColor:'black',borderColor:'black'},
+  divider: {
+    width: '100%',
+    height: 2,
+    backgroundColor: 'black',
+    borderColor: 'black',
+  },
   cancelBtn: {
-    marginHorizontal:25,
+    marginHorizontal: 25,
     alignSelf: 'center',
     width: '50%',
     justifyContent: 'center',
@@ -122,8 +123,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     alignItems: 'center',
     borderRadius: 100,
-    borderWidth:2,
-    borderColor: 'black'
+    borderWidth: 2,
+    borderColor: 'black',
   },
   textBtn: {
     fontSize: 23,

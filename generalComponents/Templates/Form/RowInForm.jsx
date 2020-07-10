@@ -3,13 +3,7 @@ import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import RadioForm from 'react-native-simple-radio-button';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Picker,
-  TextInput,
-} from 'react-native';
+import { View, Text, StyleSheet, Picker, TextInput } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Button } from 'react-native-paper';
 
@@ -27,7 +21,7 @@ export default class RowInForm extends React.Component {
     this.getPermissionAsync();
   }
   async pickImage() {
-      console.log("huhuhuh");
+    console.log('huhuhuh');
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -76,6 +70,7 @@ export default class RowInForm extends React.Component {
               this.props.onGettingValue(value, this.props.params.field)
             }
             formHorizontal={true}
+            style={styles.radioButtons}
           ></RadioForm>
         );
         break;
@@ -97,19 +92,21 @@ export default class RowInForm extends React.Component {
         break;
       case 'pic':
         this.elem = (
-            <Button title={this.props.params.title} onPress={() => this.pickImage()} style={styles.addPicture} />
+          <Button onPress={() => this.pickImage()} style={styles.addPicture} >{this.props.params.title}</Button>
         );
         break;
       case 'button':
         this.elem = (
-          <TouchableOpacity onPress={() => this.props.params.pickImage()} style={styles.addPicture}>
-              <Text >{this.props.params.title}</Text>
+          <TouchableOpacity
+            onPress={() => this.props.params.pickImage()}
+            style={styles.addPicture}
+          >
+            <Text style={styles.addPictureText}>{this.props.params.title}</Text>
           </TouchableOpacity>
         );
     }
     return (
       <View style={styles.container}>
-        {/* <Text>{this.props.params.labelVisibale?this.props.params.title:""}</Text> */}
         {
           <Text style={{ color: 'red', paddingRight: 20 }}>
             {this.props.params.isMandetory ? '*' : ''}
@@ -130,27 +127,30 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   elements: {
-    // height:"80%",
     width: '70%',
     backgroundColor: 'white',
     borderRadius: 100,
     borderWidth: 2,
     borderColor: 'black',
     padding: 8,
-    // textShadowColor:'red'
   },
   addPicture: {
-    backgroundColor: 'blue',
     height: 40,
     width: 150,
     borderRadius: 100,
-    justifyContent:"center",
-    alignItems:"center",
-    borderWidth:2,
-    borderColor: 'black'
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'black',
+    color: 'white',
   },
-  radioButton: {
-    height: 13,
+  addPictureText: {
+    color: 'blue',
+  },
+  radioButtons: {
+    flex:1,
+    justifyContent: 'space-around',
+    
   },
   combo: {
     height: '100%',

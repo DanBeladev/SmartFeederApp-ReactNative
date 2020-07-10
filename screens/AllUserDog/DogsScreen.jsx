@@ -82,7 +82,7 @@ class DogsScreen extends React.Component {
         type: 'pic',
         field: 'dogImg',
         labelVisibale: false,
-        title: 'upload picture',
+        title: 'Upload Image',
       },
     ];
     return (
