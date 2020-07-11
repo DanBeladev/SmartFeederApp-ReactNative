@@ -15,73 +15,70 @@ import ActionButton from 'react-native-action-button';
 import { Input } from 'react-native-elements';
 import DogHeader from '../../generalComponents/Header/DogHeader.component';
 import { API_INSTANCE } from '../../api/api';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 class HisunimScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       hisunim: [],
-      // hisunim: [
-      //   {
-      //     name: 'Kalevet',
-      //     date: `${new Date().getDay()} - ${
-      //       new Date().getMonth() + 1
-      //     } - ${new Date().getFullYear()}`,
-      //   },
-      //   {
-      //     name: 'Tzahevet',
-      //     date: `${new Date().getDay()} - ${
-      //       new Date().getMonth() + 1
-      //     } - ${new Date().getFullYear()}`,
-      //   },
-      // ],
       isVisible: false,
       hisunType: '',
       date: '',
+      showDatePicker: false,
     };
   }
 
-  componentDidMount = async() => {
+  componentDidMount = async () => {
     const { token } = this.props.user.userDetails;
     const dogId = this.props.dog.dogId || '5f097e367859393594c93369';
     const res = await API_INSTANCE.getHisunim(dogId, token);
     const hisunimFromApi = [...res.data];
-    this.setState({hisunim: hisunimFromApi});
-  } 
+    this.setState({ hisunim: hisunimFromApi });
+  };
 
   onAddClick = () => this.setState({ isVisible: true });
   hideModal = () => this.setState({ isVisible: false });
   createHisun = async () => {
-      const { token } = this.props.user.userDetails;
-      const dogId = this.props.dog.dogId || '5f097e367859393594c93369';
-      if (this.state.hisunType && this.state.date) {
-        const hisun = {
-          name: this.state.hisunType,
-          date: this.state.date,
-        };
-        const res = await API_INSTANCE.addHisun(hisun, dogId, token);
-        console.log('res: ', res);
-        console.log('hisunim after adding: ', res.data)
-        const newHisunim = [...res.data];
-        this.setState({
-          hisunim: newHisunim,
-          hisunType: '',
-          date: '',
-          isVisible: false,
-        });
-      } else {
-        Alert.alert('please fill all fields');
-      }
-  }
+    const { token } = this.props.user.userDetails;
+    const dogId = this.props.dog.dogId || '5f097e367859393594c93369';
+    const dateToAPI = this.state.date.replace(/ /g,'');
+    if (this.state.hisunType && this.state.date) {
+      const hisun = {
+        name: this.state.hisunType,
+        date: dateToAPI,
+      };
+      const res = await API_INSTANCE.addHisun(hisun, dogId, token);
+      const newHisunim = [...res.data];
+      this.setState({
+        hisunim: newHisunim,
+        hisunType: '',
+        date: '',
+        isVisible: false,
+      });
+    } else {
+      Alert.alert('please fill all fields');
+    }
+  };
 
   getDate = (date) => {
     const t_date = new Date(date);
     const year = t_date.getFullYear();
-    const month = t_date.getMonth()+1;
+    const month = t_date.getMonth() + 1;
     const day = t_date.getDate();
     const res = `${year} - ${month} - ${day}`;
     return res;
-  }
+  };
+
+  showTimepicker = () => {
+    this.setState({ showDatePicker: true });
+  };
+
+  dateChanged = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    console.log(currentDate);
+    this.setState({ date: this.getDate(currentDate), showDatePicker: false });
+  };
 
   render() {
     return (
@@ -120,15 +117,16 @@ class HisunimScreen extends React.Component {
                 value={this.state.hisunType}
                 onChangeText={(e) => this.setState({ hisunType: e })}
               ></Input>
-              <Input
-                placeholder='Date'
-                value={this.state.date}
-                onChangeText={(e) => this.setState({ date: e })}
-              ></Input>
-              <Button
-                title='Add Hisun'
-                onPress= {this.createHisun}
-              ></Button>
+              <Button onPress={this.showTimepicker} title="Choose Hisun Date" style={{backgroundColor:'red'}}></Button>
+              <Text style={{ textAlign: 'center' }}>{this.state.date}</Text>
+              {this.state.showDatePicker && (
+                <DateTimePicker
+                  value={new Date()}
+                  display='spinner'
+                  onChange={this.dateChanged}
+                />
+              )}
+              <Button title='Add Hisun' onPress={this.createHisun}></Button>
             </View>
           </Modal>
           <ActionButton
@@ -146,7 +144,7 @@ class HisunimScreen extends React.Component {
 const mapStateToProps = (state) => {
   return {
     user: state.user,
-    dog: state.dog
+    dog: state.dog,
   };
 };
 
