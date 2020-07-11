@@ -8,3 +8,11 @@ export const uploadImage = async (uri, imageName) =>{
     return ref.put(blob);
 
   } 
+
+
+  export const createHeader =  (token) =>{
+    const headers = {
+      'Authorization' : `Bearer ${token}`
+  }
+return headers;
+  } 

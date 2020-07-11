@@ -5,7 +5,10 @@ import { backgroundColor, headerHeight } from '../../common/constants';
 
 export default class DogHeader extends React.Component {
   menuClicked = () => {
-    const { navigation } = this.props;
+    console.log('in menu clicked in dog header');
+
+    const { navigation, dog } = this.props;
+    console.log(dog);
     navigation.openDrawer();
   };
 
@@ -13,11 +16,11 @@ export default class DogHeader extends React.Component {
     return (
       <Appbar style={styles.top}>
         <Appbar.Action icon='menu' onPress={this.menuClicked} />
-        <Avatar.Image
+        {/* <Avatar.Image
           style={styles.headerImg}
           size={100}
-          source={this.props.dog.dogImg}
-        />
+          source = {this.props.dog.dogImg }
+        /> */}
       </Appbar>
     );
   }

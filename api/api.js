@@ -1,4 +1,5 @@
 import Axios from 'axios';
+import { createHeader } from '../generalComponents/Utils';
 
 export const API_URL = 'https://petfeeder-app.herokuapp.com/api/v1.0/';
 
@@ -17,10 +18,20 @@ const signup_api = async (user) => {
 };
 
 const getUserDogs_api = async (token) => {
-    const headers = {
-        'Authorization' : `Bearer ${token}`
-    }
+    const headers = createHeader(token);
     const data = await getRequest(`${API_URL}dogs`, headers, {});
+    return data;
+};
+
+const getHisunim_api = async (dogId, token) => {
+    const headers = createHeader(token);
+    const data = await getRequest(`${API_URL}dogs/vaccines/${dogId}`,headers, {});
+    return data;
+};
+
+const addHisun_api = async (hisun,dogId, token) => {
+    const headers = createHeader(token);
+    const data = await postRequest(`${API_URL}dogs/newVaccine/${dogId}`, hisun, headers);
     return data;
 };
 
@@ -38,6 +49,8 @@ export const API_INSTANCE = {
   signup: signup_api,
   addDog: addDog_api,
   getDogs: getUserDogs_api,
+  getHisunim: getHisunim_api,
+  addHisun: addHisun_api
 };
 
 const postRequest = async (url, body, headers={}) => {

@@ -8,46 +8,81 @@ import {
   Button,
   Alert,
 } from 'react-native';
+import { connect } from 'react-redux';
 import { DataTable } from 'react-native-paper';
 import { headerHeight } from '../../common/constants';
 import ActionButton from 'react-native-action-button';
 import { Input } from 'react-native-elements';
 import DogHeader from '../../generalComponents/Header/DogHeader.component';
+import { API_INSTANCE } from '../../api/api';
 
-export default class HisunimScreen extends React.Component {
+class HisunimScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      hisunim: [
-        {
-          name: 'Kalevet',
-          date: `${new Date().getDay()} - ${
-            new Date().getMonth() + 1
-          } - ${new Date().getFullYear()}`,
-        },
-        {
-          name: 'Tzahevet',
-          date: `${new Date().getDay()} - ${
-            new Date().getMonth() + 1
-          } - ${new Date().getFullYear()}`,
-        },
-      ],
+      hisunim: [],
+      // hisunim: [
+      //   {
+      //     name: 'Kalevet',
+      //     date: `${new Date().getDay()} - ${
+      //       new Date().getMonth() + 1
+      //     } - ${new Date().getFullYear()}`,
+      //   },
+      //   {
+      //     name: 'Tzahevet',
+      //     date: `${new Date().getDay()} - ${
+      //       new Date().getMonth() + 1
+      //     } - ${new Date().getFullYear()}`,
+      //   },
+      // ],
       isVisible: false,
       hisunType: '',
       date: '',
     };
   }
 
+  componentDidMount = async() => {
+    const { token } = this.props.user.userDetails;
+    const dogId = this.props.dog.dogId || '5f097e367859393594c93369';
+    const res = await API_INSTANCE.getHisunim(dogId, token);
+    const hisunimFromApi = [...res.data];
+    this.setState({hisunim: hisunimFromApi});
+  } 
+
   onAddClick = () => this.setState({ isVisible: true });
   hideModal = () => this.setState({ isVisible: false });
-  buildForm = () => {
-    return (
-      <View>
-        <Text>sHALP</Text>
-        <Text>MODLA</Text>
-      </View>
-    );
-  };
+  createHisun = async () => {
+      const { token } = this.props.user.userDetails;
+      const dogId = this.props.dog.dogId || '5f097e367859393594c93369';
+      if (this.state.hisunType && this.state.date) {
+        const hisun = {
+          name: this.state.hisunType,
+          date: this.state.date,
+        };
+        const res = await API_INSTANCE.addHisun(hisun, dogId, token);
+        console.log('res: ', res);
+        console.log('hisunim after adding: ', res.data)
+        const newHisunim = [...res.data];
+        this.setState({
+          hisunim: newHisunim,
+          hisunType: '',
+          date: '',
+          isVisible: false,
+        });
+      } else {
+        Alert.alert('please fill all fields');
+      }
+  }
+
+  getDate = (date) => {
+    const t_date = new Date(date);
+    const year = t_date.getFullYear();
+    const month = t_date.getMonth()+1;
+    const day = t_date.getDate();
+    const res = `${year} - ${month} - ${day}`;
+    return res;
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -63,7 +98,7 @@ export default class HisunimScreen extends React.Component {
                 return (
                   <DataTable.Row key={hisun.name}>
                     <DataTable.Cell>{hisun.name}</DataTable.Cell>
-                    <DataTable.Cell>{hisun.date} </DataTable.Cell>
+                    <DataTable.Cell>{this.getDate(hisun.date)} </DataTable.Cell>
                   </DataTable.Row>
                 );
               })}
@@ -92,24 +127,7 @@ export default class HisunimScreen extends React.Component {
               ></Input>
               <Button
                 title='Add Hisun'
-                onPress={() => {
-                  if (this.state.hisunType && this.state.date) {
-                    const hisun = {
-                      name: this.state.hisunType,
-                      date: this.state.date,
-                    };
-                    const newHisunim = [...this.state.hisunim];
-                    newHisunim.push(hisun);
-                    this.setState({
-                      hisunim: newHisunim,
-                      hisunType: '',
-                      date: '',
-                      isVisible: false,
-                    });
-                  } else {
-                    Alert.alert('please fill all fields');
-                  }
-                }}
+                onPress= {this.createHisun}
               ></Button>
             </View>
           </Modal>
@@ -125,7 +143,14 @@ export default class HisunimScreen extends React.Component {
     );
   }
 }
+const mapStateToProps = (state) => {
+  return {
+    user: state.user,
+    dog: state.dog
+  };
+};
 
+export default connect(mapStateToProps)(HisunimScreen);
 const styles = StyleSheet.create({
   container: {
     top: headerHeight,
