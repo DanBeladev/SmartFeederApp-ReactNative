@@ -8,11 +8,7 @@ import {
   Avatar,
   Title,
   Caption,
-  Paragraph,
   Drawer,
-  Text,
-  TouchableRipple,
-  Switch,
 } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
@@ -34,7 +30,7 @@ render(){
             source={require('../../assets/hand.png')}
             size={120}
           />
-          <Title style={styles.title}>{userDetails.name}</Title>
+          <Title style={styles.title}>{userDetails.username}</Title>
           <Caption style={styles.caption}>{userDetails.email}</Caption>
           <Caption style={styles.caption}>{userDetails.phone}</Caption>
         </View>

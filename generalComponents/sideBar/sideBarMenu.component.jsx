@@ -4,11 +4,8 @@ import {
   Text,
   StyleSheet,
   Image,
-  TextInput,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { Actions } from 'react-native-router-flux';
 import * as firebase from 'firebase';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { signOut } from '../../actions/usersActions';
@@ -39,12 +36,10 @@ import { connect } from 'react-redux';
   }
   home = (screenToNavigate) => {
     this.props.navigation.jumpTo('Home');
-    // Actions[screenToNavigate].call();
   };
 
   second = (screenToNavigate) => {
     this.props.navigation.jumpTo('Fucker');
-    // Actions[screenToNavigate].call();
   };
 
   logoutHandler = (screenToNavigate) => {

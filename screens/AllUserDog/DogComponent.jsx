@@ -1,21 +1,17 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-} from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import dogAvatar from '../../assets/noDogImg.jpg';
 
 export default class DogComponent extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.state={
+    this.state = {
       img: null,
-    }
+    };
   }
+
   dogPressed = () => {
     this.props.callBack(this.props.dog);
     this.props.navigation.navigate('DogManagement', {
@@ -23,11 +19,19 @@ export default class DogComponent extends Component {
     });
   };
 
-  componentDidMount(){
+  componentDidMount() {
     const { dog } = this.props;
-    firebase.storage().ref().child("images/"+dog.ownerID+"/"+dog.dogName+"Profile").getDownloadURL().then((url)=>{
-      this.setState({img:url})
-    }).catch(err=>console.log(err))
+    console.log(dog);
+
+    // firebase
+    //   .storage()
+    //   .ref()
+    //   .child('images/' + dog.ownerID + '/' + dog.dogName + 'Profile')
+    //   .getDownloadURL()
+    //   .then((url) => {
+    //     this.setState({ img: url });
+    //   })
+    //   .catch((err) => console.log(err));
   }
 
   render() {
@@ -35,11 +39,15 @@ export default class DogComponent extends Component {
     return (
       <TouchableOpacity style={style.container} onPress={this.dogPressed}>
         <View style={style.leftSide}>
-        {this.state.img || dog.dogImg?
-            <Image style={style.image} source={dog.dogImg?dog.dogImg:{uri:this.state.img}}></Image>:
+          {this.state.img || dog.dogImg ? (
+            <Image
+              style={style.image}
+              source={dog.dogImg ? dog.dogImg : { uri: this.state.img }}
+            ></Image>
+          ) : (
             <Image style={style.image} source={dogAvatar}></Image>
-        }      
-          <Text style={style.dogName}>{dog.dogName}</Text>
+          )}
+          <Text style={style.dogName}>{dog.name}</Text>
         </View>
         <View style={style.innerText}>
           <Text style={style.text}>
@@ -64,14 +72,12 @@ export default class DogComponent extends Component {
   }
 }
 
-
-
 const style = StyleSheet.create({
   container: {
     backgroundColor: '#fffff9',
     flexDirection: 'row',
     height: 140,
-    width: '100%', 
+    width: '100%',
     padding: 20,
     justifyContent: 'space-between',
     borderRadius: 30,

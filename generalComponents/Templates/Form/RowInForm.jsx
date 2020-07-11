@@ -3,7 +3,7 @@ import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import RadioForm from 'react-native-simple-radio-button';
-import { View, Text, StyleSheet, Picker, TextInput } from 'react-native';
+import { Image, View, Text, StyleSheet, Picker, TextInput } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Button } from 'react-native-paper';
 
@@ -21,7 +21,6 @@ export default class RowInForm extends React.Component {
     this.getPermissionAsync();
   }
   async pickImage() {
-    console.log('huhuhuh');
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -92,7 +91,9 @@ export default class RowInForm extends React.Component {
         break;
       case 'pic':
         this.elem = (
-          <Button onPress={() => this.pickImage()} style={styles.addPicture} >{this.props.params.title}</Button>
+            <Button onPress={() => this.pickImage()} style={styles.addPicture}>
+              {this.props.params.title}
+            </Button>
         );
         break;
       case 'button':
@@ -126,6 +127,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
   },
+  chosenPic:{
+    backgroundColor:'red',
+    width: 150
+  },
   elements: {
     width: '70%',
     backgroundColor: 'white',
@@ -148,9 +153,8 @@ const styles = StyleSheet.create({
     color: 'blue',
   },
   radioButtons: {
-    flex:1,
+    flex: 1,
     justifyContent: 'space-around',
-    
   },
   combo: {
     height: '100%',

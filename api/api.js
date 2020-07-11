@@ -17,9 +17,11 @@ const signup_api = async (user) => {
 };
 
 const getUserDogs_api = async (token) => {
-    const data = await getRequest(`${API_URL}dogs/new`, token, {});
-    // const data = await postRequest(`${API_URL}dogs/new`, dog, {});
-    // return data;
+    const headers = {
+        'Authorization' : `Bearer ${token}`
+    }
+    const data = await getRequest(`${API_URL}dogs`, headers, {});
+    return data;
 };
 
 const addDog_api = async (dog, token) => {
@@ -34,7 +36,8 @@ const addDog_api = async (dog, token) => {
 export const API_INSTANCE = {
   login: login_api,
   signup: signup_api,
-  addDog: addDog_api
+  addDog: addDog_api,
+  getDogs: getUserDogs_api,
 };
 
 const postRequest = async (url, body, headers={}) => {
@@ -46,7 +49,7 @@ const postRequest = async (url, body, headers={}) => {
   }
 };
 
-const getRequest = async (url, falsyResponse) => {
-  const data = await Axios.get(url);
+const getRequest = async (url, headers = {}, falsyResponse) => {
+  const data = await Axios.get(url, { headers });
   return data ? data : falsyResponse;
 };

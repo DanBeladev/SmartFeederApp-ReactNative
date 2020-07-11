@@ -16,6 +16,8 @@ import Form from '../../generalComponents/Templates/Form/Form';
 import { uploadImage } from '../../generalComponents/Utils';
 import Header from '../../generalComponents/Header/Header';
 import { backgroundColor, headerHeight } from '../../common/constants';
+import Axios from 'axios';
+import { API_INSTANCE, API_URL } from '../../api/api';
 
 class DogsScreen extends React.Component {
   constructor(props) {
@@ -30,26 +32,12 @@ class DogsScreen extends React.Component {
     this.dataBase = firebase.database();
     this.counter = 0;
   }
-  componentDidMount() {
-    console.log('in dogs screen',this.props.user.userDetails);
-    // const { userID, name } = this.props.user.userDetails;
-    // let allDogs = this.state.allUserDogs;
-    // firebase
-    //   .database()
-    //   .ref('Dogs/')
-    //   .orderByChild('ownerID')
-    //   .equalTo(userID)
-    //   .on('value', (snapshot) => {
-    //     let index = 0;
-    //     snapshot.forEach((dogFromDb) => {
-    //       if (dogFromDb) {
-    //         const dog = dogFromDb.val();
-    //         allDogs.push(dog);
-    //       }
-    //     });
-    //     this.setState({ isLoaded: true, allUserDogs: allDogs });
-    //   });
-    this.setState({isLoaded:true});
+  async componentDidMount() {
+    console.log('in dogs screen', this.props.user.userDetails);
+    const { token } = this.props.user.userDetails;
+    const data = await API_INSTANCE.getDogs(token);
+    const dogs = [...data.data];
+    this.setState({allUserDogs: dogs, isLoaded: true});
   }
 
   buildForm = () => {
@@ -67,8 +55,8 @@ class DogsScreen extends React.Component {
         title: 'Gender',
         labelVisibale: true,
         radioProps: [
-          { label: 'Male     ', value: 0 },
-          { label: 'Female', value: 1 },
+          { label: 'Male     ', value: 'Male' },
+          { label: 'Female', value: 'Female' },
         ],
       },
       {
@@ -89,6 +77,7 @@ class DogsScreen extends React.Component {
       <Form
         fields={fields}
         callBack={this.formCallBack}
+        // callBack={this.test}
         closeForm={() => {
           this.setState({ isModalVisible: false });
         }}
@@ -96,6 +85,15 @@ class DogsScreen extends React.Component {
     );
   };
 
+  callBackForDogChoosing = (dog) => {
+    this.props.setDog(dog);
+  };
+
+  onAddClick = () => {
+    this.setState({ isModalVisible: true });
+  };
+
+  // get object with values of form
   formCallBack = (fieldsToValue) => {
     let newest = [...this.state.allUserDogs];
     this.setState({ isModalVisible: false });
@@ -118,16 +116,85 @@ class DogsScreen extends React.Component {
     this.setState({ allUserDogs: newest, isModalVisible: false });
   };
 
-  callBackForDogChoosing = (dog) => {
-    this.props.setDog(dog);
-  };
+/*
+  var axios = require('axios');
+  var FormData = require('form-data');
+  var fs = require('fs');
 
-  onAddClick = () => {
-    this.setState({ isModalVisible: true });
+  var data = new FormData();
+  data.append('name', 'luli');
+  data.append('gender', 'female');
+  data.append('birthDate', '2002-11-15');
+  data.append('image', fs.createReadStream('/C:/Users/shmue/Pictures/iCloud Photos/Downloads/1A6A0C69-0B1D-41CF-BCE9-08E3F13C0308.JPG'));
+  
+  var config = {
+    method: 'post',
+    url: 'http:\\\\localhost:3000/api/v1.0/dogs/new',
+    headers: { 
+      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMDc1MDZhODk5MjA4MDAxNzYwNGFjYyIsImlhdCI6MTU5NDM2NjE1NCwiZXhwIjoxNTk0OTcwOTU0fQ.EAp5qcUQTO5TThkKWzpXTObunQ53g6zAHKeg7R0hFek', 
+      ...data.getHeaders()
+    },
+    data : data
+  };
+  
+  axios(config)
+  .then(function (response) {
+    console.log(JSON.stringify(response.data));
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+*/
+  test = (fieldsToValue) => {
+    console.log('in test');
+    console.log('in test-fields->', fieldsToValue);
+    const { token } = this.props.user.userDetails;
+    let data = new FormData();
+    data.append('name', fieldsToValue.dogName);
+    data.append('gender', fieldsToValue.gender);
+    data.append('birthDate', '2002-11-15');
+    console.log('image uri: ',fieldsToValue.dogImg.uri );
+    data.append('photo', {
+      uri: fieldsToValue.dogImg.uri,
+      name: 'photo.png',
+      filename: 'imageName.png',
+      type: 'image/png',
+    });
+    data.append('Content-Type', 'image/png');
+    console.log('data: ',data);
+    Axios.post(`${API_URL}dogs/new`, {
+      data: data,
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+      .then((res) => checkStatus(res))
+      .then((res) => res.json())
+      .then((res) => {
+        console.log('response' + JSON.stringify(res));
+      })
+      .catch((e) => console.log(e))
+      .done();
+    // console.log('in test');
+    // const dog = {
+    //   name: 'Rami',
+    //   gender: 'Male',
+    //   birthDate: '2000-11-15',
+    // };
+    // const { token } = this.props.user.userDetails;
+    // API_INSTANCE.addDog(dog, token)
+    //   .then((res) => {
+    //     console.log(' created ', res);
+    //   })
+    //   .catch((err) => {
+    //     console.log('oh no ', err);
+    //   });
   };
 
   render() {
     const allDogsObj = this.state.allUserDogs;
+    
 
     return (
       <View style={styles.container}>
@@ -136,9 +203,10 @@ class DogsScreen extends React.Component {
           <View style={styles.dogs}>
             {allDogsObj.length > 0 ? (
               allDogsObj.map((dog) => {
+                console.log('dog is->', dog);
                 return (
                   <DogComponent
-                    key={dog.dogName}
+                    key={dog._id}
                     dog={dog}
                     callBack={this.callBackForDogChoosing}
                     navigation={this.props.navigation}

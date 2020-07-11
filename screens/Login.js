@@ -36,9 +36,7 @@ class Login extends Component {
   };
 
   onLoginPressed = async () => {
-    console.log('in login');
     this.setState({ isLoggedIn: true });
-    console.log(`${API_URL}users/login`);
     const data = await API_INSTANCE.login(
       this.state.email,
       this.state.password
