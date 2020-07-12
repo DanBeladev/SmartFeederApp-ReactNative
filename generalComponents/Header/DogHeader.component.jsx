@@ -2,8 +2,10 @@ import * as React from 'react';
 import { Avatar, Appbar } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
 import { backgroundColor, headerHeight } from '../../common/constants';
+import { API_BASE_URL } from '../../api/api';
+import { connect } from 'react-redux';
 
-export default class DogHeader extends React.Component {
+class DogHeader extends React.Component {
   menuClicked = () => {
     console.log('in menu clicked in dog header');
 
@@ -13,18 +15,30 @@ export default class DogHeader extends React.Component {
   };
 
   render() {
+    const {image} = this.props.dog; 
+    console.log(image);
+    const dogImageUrl = `${API_BASE_URL}${image}`;
+    console.log('avatar: ', dogImageUrl);
     return (
       <Appbar style={styles.top}>
         <Appbar.Action icon='menu' onPress={this.menuClicked} />
-        {/* <Avatar.Image
+        <Avatar.Image
           style={styles.headerImg}
           size={100}
-          source = {this.props.dog.dogImg }
-        /> */}
+          source={{uri:`${dogImageUrl}`}}
+        />
       </Appbar>
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    user: state.user,
+    dog: state.dog.currentDog,
+  };
+};
+export default connect(mapStateToProps)(DogHeader);
 
 const styles = StyleSheet.create({
   top: {

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import * as firebase from 'firebase';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import dogAvatar from '../../assets/noDogImg.jpg';
+import { API_BASE_URL } from '../../api/api';
 
 export default class DogComponent extends Component {
   constructor(props) {
@@ -22,27 +22,19 @@ export default class DogComponent extends Component {
   componentDidMount() {
     const { dog } = this.props;
     console.log(dog);
-
-    // firebase
-    //   .storage()
-    //   .ref()
-    //   .child('images/' + dog.ownerID + '/' + dog.dogName + 'Profile')
-    //   .getDownloadURL()
-    //   .then((url) => {
-    //     this.setState({ img: url });
-    //   })
-    //   .catch((err) => console.log(err));
   }
 
   render() {
     const { dog } = this.props;
+    console.log('dog from props: ',dog);
+    const image = `${API_BASE_URL}${dog.image}`;
     return (
       <TouchableOpacity style={style.container} onPress={this.dogPressed}>
         <View style={style.leftSide}>
-          {this.state.img || dog.dogImg ? (
+          {this.state.img || dog.image ? (
             <Image
               style={style.image}
-              source={dog.dogImg ? dog.dogImg : { uri: this.state.img }}
+              source={image ? {uri:image} : { uri: this.state.img }}
             ></Image>
           ) : (
             <Image style={style.image} source={dogAvatar}></Image>
