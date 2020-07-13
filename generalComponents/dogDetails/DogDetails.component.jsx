@@ -1,70 +1,67 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
 import { headerHeight } from '../../common/constants';
+import { AppRegistry, StyleSheet, Text, View, Animated } from 'react-native';
 
 export default class DogDetails extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      hisunim: [
-        {
-          name: 'Kalevet',
-          date: `${new Date().getDay()} - ${
-            new Date().getMonth() + 1
-          } - ${new Date().getFullYear()}`,
-        },
-        {
-          name: 'Tzahevet',
-          date: `${new Date().getDay()} - ${
-            new Date().getMonth() + 1
-          } - ${new Date().getFullYear()}`,
-        },
-      ],
-      isVisible: true,
-      hisunType: '',
-      date: '',
-    };
+    this.springValue = new Animated.Value(0.3);
+  }
+  componentDidMount() {
+    this.spring();
   }
 
-  onAddClick = () => this.setState({ isVisible: true });
-  hideModal = () => this.setState({ isVisible: false });
-  buildForm = () => {
-    return (
-      <View>
-        <Text>sHALP</Text>
-        <Text>MODLA</Text>
-      </View>
-    );
+  spring = () => {
+    this.springValue.setValue(0.3);
+    Animated.spring(this.springValue, {
+      toValue: 1,
+      friction: 1,
+      tension: 1,
+    }).start(() => this.spring());
   };
   render() {
     return (
-      <View style={{ top: 80 }}>
-        <Text>Dog Details</Text>
-        <Text>Screen</Text>
+      <View style={styles.container}>
+        <Text style={styles.text} onPress={this.spring}>
+          Drop Food
+        </Text>
+        <View style={styles.animationContainer}>
+          <Animated.Image
+            style={{
+              borderRadius: 50,
+              width: 227,
+              height: 200,
+              transform: [{ scale: this.springValue }],
+            }}
+            source={require('../../assets/pet05-512.png')}
+          />
+        </View>
       </View>
     );
   }
 }
+AppRegistry.registerComponent('animations', () => DogDetails);
 
 const styles = StyleSheet.create({
   container: {
-    top: headerHeight,
-    backgroundColor: 'white',
     flex: 1,
-    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  addContainer: {
-    top: headerHeight - 20,
-    // left: 10,
-    maxWidth: '100%',
-    // alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 20,
-    borderRadius: 50,
-    // flexDirection: 'column',
-    borderWidth: 2,
-    // flex: 2,
+  animationContainer: {
+    borderWidth: 5,
+    borderColor: 'green',
+    borderRadius: 100,
+    width: 300,
     height: 300,
-    marginHorizontal: 10,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    marginVertical: 100,
+    fontSize: 50,
+    fontFamily:'sans-serif',
+    color:'green'
   },
 });

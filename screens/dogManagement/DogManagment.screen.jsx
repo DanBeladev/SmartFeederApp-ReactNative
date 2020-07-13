@@ -36,7 +36,7 @@ export default connect(mapStateToProps)(DogManagment);
 
 const style = StyleSheet.create({
   container: {
-    backgroundColor: 'red',
+    // backgroundColor: 'red',
     flex: 1,
   },
 });
