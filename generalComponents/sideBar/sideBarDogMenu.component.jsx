@@ -31,6 +31,7 @@ class DrawerContent extends Component {
       console.log('problem with fetch amount');
     
   }
+}
 
   render() {
     return (
@@ -65,7 +66,7 @@ class DrawerContent extends Component {
               )}
               label='Statistics'
               onPress={() => {
-                console.log('Statistics');
+                this.props.navigation.navigate('Statistics');
               }}
             />
             <DrawerItem
@@ -128,7 +129,7 @@ class DrawerContent extends Component {
       </DrawerContentScrollView>
     );
   }
-}
+  }
 
 const mapStateToProps = (state) => {
   return {
