@@ -31,9 +31,11 @@ class HisunimScreen extends React.Component {
 
   componentDidMount = async () => {
     const { token } = this.props.user.userDetails;
-    const dogId = this.props.dog.dogId || '5f097e367859393594c93369';
-    const res = await API_INSTANCE.getHisunim(dogId, token);
+    const {_id} = this.props.dog.currentDog;
+    console.log('dog :' ,_id)
+    const res = await API_INSTANCE.getHisunim(_id, token);
     const hisunimFromApi = [...res.data];
+    console.log('hisunim from server: ',)
     this.setState({ hisunim: hisunimFromApi });
   };
 
@@ -41,14 +43,14 @@ class HisunimScreen extends React.Component {
   hideModal = () => this.setState({ isVisible: false });
   createHisun = async () => {
     const { token } = this.props.user.userDetails;
-    const dogId = this.props.dog.dogId || '5f097e367859393594c93369';
+    const {_id} = this.props.dog.currentDog;
     const dateToAPI = this.state.date.replace(/ /g,'');
     if (this.state.hisunType && this.state.date) {
       const hisun = {
         name: this.state.hisunType,
         date: dateToAPI,
       };
-      const res = await API_INSTANCE.addHisun(hisun, dogId, token);
+      const res = await API_INSTANCE.addHisun(hisun, _id, token);
       const newHisunim = [...res.data];
       this.setState({
         hisunim: newHisunim,

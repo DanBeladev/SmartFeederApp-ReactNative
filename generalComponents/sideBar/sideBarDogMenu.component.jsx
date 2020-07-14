@@ -5,8 +5,33 @@ import { Avatar, Title, Caption, Drawer } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import { signOut } from '../../actions/usersActions';
+import { API_INSTANCE } from '../../api/api';
 
 class DrawerContent extends Component {
+
+
+  makeNoise = async () => {
+    const {token} = this.props.user.userDetails;
+    const res  = await API_INSTANCE.makeNoise(token);
+    if(res.data){
+      console.log('was a noise');
+    }
+    else{
+      console.log('problem with making noise');
+    }
+  }
+
+  checkHowMuchLeft = async()=> {
+    const {token} = this.props.user.userDetails;
+    const res  = await API_INSTANCE.howMuchLeft(token);
+    if(res.data){
+      console.log(res.data);
+    }
+    else{
+      console.log('problem with fetch amount');
+    
+  }
+
   render() {
     return (
       <DrawerContentScrollView {...this.props}>
@@ -61,9 +86,7 @@ class DrawerContent extends Component {
                 <MaterialCommunityIcons name='bone' color={color} size={size} />
               )}
               label='How Much Left?'
-              onPress={() => {
-                console.log('How Much Left?');
-              }}
+              onPress={this.checkHowMuchLeft}
             />
           </Drawer.Section>
           <Drawer.Section>
@@ -76,9 +99,7 @@ class DrawerContent extends Component {
                 />
               )}
               label='Make Noise'
-              onPress={() => {
-                console.log('Make NOISE');
-              }}
+              onPress={this.makeNoise}
             />
           </Drawer.Section>
           <Drawer.Section>

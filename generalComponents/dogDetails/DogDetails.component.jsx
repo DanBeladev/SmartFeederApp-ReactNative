@@ -1,10 +1,16 @@
 import React from 'react';
-import { headerHeight } from '../../common/constants';
 import { AppRegistry, StyleSheet, Text, View, Animated } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { API_INSTANCE } from '../../api/api';
+import Spinner from './Spinner';
+import { connect } from 'react-redux';
 
-export default class DogDetails extends React.Component {
+class DogDetails extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      isLoading: false,
+    };
     this.springValue = new Animated.Value(0.3);
   }
   componentDidMount() {
@@ -19,13 +25,28 @@ export default class DogDetails extends React.Component {
       tension: 1,
     }).start(() => this.spring());
   };
+
+  dropFoodClicked = async () => {
+    this.setState({ isLoading: true });
+    const { token } = this.props.user.userDetails
+    const res = await API_INSTANCE.dropFood(token);
+    if (res.data) {
+      console.log('food was dropped');
+      this.setState({ isLoading: false });
+    }
+  };
   render() {
-    return (
+    return this.state.isLoading ? (
+     <Spinner />
+    ) : (
       <View style={styles.container}>
         <Text style={styles.text} onPress={this.spring}>
           Drop Food
         </Text>
-        <View style={styles.animationContainer}>
+        <TouchableOpacity
+          style={styles.animationContainer}
+          onPress={this.dropFoodClicked}
+        >
           <Animated.Image
             style={{
               borderRadius: 50,
@@ -35,12 +56,18 @@ export default class DogDetails extends React.Component {
             }}
             source={require('../../assets/pet05-512.png')}
           />
-        </View>
+        </TouchableOpacity>
       </View>
     );
   }
 }
 AppRegistry.registerComponent('animations', () => DogDetails);
+const mapStateToProps = (state) => {
+  return {
+    user: state.user,
+  };
+};
+export default connect(mapStateToProps)(DogDetails);
 
 const styles = StyleSheet.create({
   container: {
@@ -61,7 +88,7 @@ const styles = StyleSheet.create({
   text: {
     marginVertical: 100,
     fontSize: 50,
-    fontFamily:'sans-serif',
-    color:'green'
+    fontFamily: 'sans-serif',
+    color: 'green',
   },
 });
