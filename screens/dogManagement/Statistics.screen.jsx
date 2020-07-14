@@ -12,20 +12,21 @@ import {
 } from "react-native-chart-kit";
 
 export default class Statistics extends React.Component {
- constructor(props){
-   super(props);
-   this.state={
-    data:[1,2,3,4,5],
-    shownData:[1,2,3,4,5]
-  }
-  this.isDaily=true;
-  this.labels;
-  this.getDataFromServer=this.getDataFromServer.bind(this);
+  constructor(props){
+    super(props);
+    this.state={
+      data:[1,2,3,4,5],
+      startIndex:0
+    }
+    this.isDaily=true;
+    this.labels;
+    this.getDataFromServer=this.getDataFromServer.bind(this);
+    this.nextPrevClicked=this.nextPrevClicked.bind(this);
  }
 
-componentDidMount(){
-  this.getDataFromServer("weekly");
-}
+  componentDidMount(){
+    this.getDataFromServer("monthly");
+  }
   
 
   getDataFromServer(dataWidth){
@@ -56,12 +57,33 @@ componentDidMount(){
       labels=["breakfast","lunch", "dinner"];
     }
     else{
-      labels=Array.from(Array(data.length).keys()).map(v=>v+1); //gets array of [1,2,3...,n]
+      labels=Array.from(Array(7).keys()).map(v=>v+1); //gets array of [1,2,3...,n]
     }
-    console.log(labels);
-    console.log(data);
     this.labels=labels;
-    this.setState({data:data,shownData:data.slice(0,7)}); //we get only first seven data to show
+    this.setState({data:data, startIndex:0}); //we get only first seven data to show
+  }
+
+  nextPrevClicked(direction){
+    let newIndex;
+    let diff=0;
+    if(direction==="next"){
+      newIndex=this.state.startIndex+7;
+      if(newIndex+8>this.state.data.length){
+        diff=this.state.data.length-newIndex;
+        if(newIndex>=this.state.data.length){
+          newIndex=newIndex-7;
+          diff=this.state.data.length-newIndex;
+        }
+      }
+    }
+    else{
+      newIndex=this.state.startIndex-7;
+      if(newIndex<0){
+        newIndex=0;
+      }
+    }
+    this.labels=Array.from(Array(diff || 7).keys()).map(v=>v+newIndex+1);
+    this.setState({startIndex:newIndex});
   }
 
 
@@ -75,7 +97,7 @@ componentDidMount(){
             data={{
               labels: this.labels,
               datasets: [
-                {data:(this.state.shownData)}
+                {data:(this.state.data.slice(this.state.startIndex,this.state.startIndex+7))}
               ]
             }}
             width={360} // from react-native
@@ -90,11 +112,15 @@ componentDidMount(){
             }}
           />
         </View>
+        <View style={style.prevNext}>
+          <Button title="Prev" onPress={()=>this.nextPrevClicked("prev")}/>
+          <Button title="Next" onPress={()=>this.nextPrevClicked("next")}/>
+        </View>
           <View style={style.buttonsBar}>
-            <Button title="Daily" />
-            <Button title="Weekly" />
-            <Button title="Monthly" />
-            <Button title="Yearly" />
+            <Button title="Daily" onPress={()=>this.getDataFromServer("daily")}/>
+            <Button title="Weekly" onPress={()=>this.getDataFromServer("weekly")}/>
+            <Button title="Monthly" onPress={()=>this.getDataFromServer("monthly")}/>
+            <Button title="Yearly" onPress={()=>this.getDataFromServer("yearly")}/>
         </View>
       </View>
     );
@@ -113,11 +139,17 @@ const style = StyleSheet.create({
   buttonsBar:{
     flexDirection:'row',
     justifyContent:"space-between",
-    margin: 4
+    margin: 4,
+    marginTop:30
   },
   chart:{
     position: 'relative',
     marginTop: 120
+  },
+  prevNext:{
+    flexDirection:'row',
+    justifyContent:"space-between",
+    margin:10
   }
 });
 
