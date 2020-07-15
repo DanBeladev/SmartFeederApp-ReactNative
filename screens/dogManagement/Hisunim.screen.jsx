@@ -119,7 +119,7 @@ class HisunimScreen extends React.Component {
                 value={this.state.hisunType}
                 onChangeText={(e) => this.setState({ hisunType: e })}
               ></Input>
-              <Button onPress={this.showTimepicker} title="Choose Hisun Date" style={{backgroundColor:'red'}}></Button>
+              <Button onPress={this.showTimepicker} title="Choose Hisun Date"></Button>
               <Text style={{ textAlign: 'center' }}>{this.state.date}</Text>
               {this.state.showDatePicker && (
                 <DateTimePicker
