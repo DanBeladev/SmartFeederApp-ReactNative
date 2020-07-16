@@ -7,25 +7,20 @@ import { connect } from 'react-redux';
 
 class DogHeader extends React.Component {
   menuClicked = () => {
-    console.log('in menu clicked in dog header');
-
-    const { navigation, dog } = this.props;
-    console.log(dog);
+    const { navigation } = this.props;
     navigation.openDrawer();
   };
 
   render() {
-    const {image} = this.props.dog; 
-    console.log(image);
+    const { image } = this.props.dog;
     const dogImageUrl = `${API_BASE_URL}${image}`;
-    console.log('avatar: ', dogImageUrl);
     return (
       <Appbar style={styles.top}>
         <Appbar.Action icon='menu' onPress={this.menuClicked} />
         <Avatar.Image
           style={styles.headerImg}
           size={100}
-          source={{uri:`${dogImageUrl}`}}
+          source={{ uri: `${dogImageUrl}` }}
         />
       </Appbar>
     );

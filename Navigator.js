@@ -29,7 +29,8 @@ function LoginStack() {
   );
 }
 
-function DogManagemnetDrawer() {
+function DogManagemnetDrawer(props) {
+  console.log(props);
   return (
     <DogDrawer.Navigator
       initialRouteName='DogDetails'
@@ -37,7 +38,7 @@ function DogManagemnetDrawer() {
     >
       <DogDrawer.Screen name='DogDetails' component={DogManagment} />
       <DogDrawer.Screen name='Hisunim' component={HisunimScreen} />
-      <DogDrawer.Screen name='Settings' component={Settings} />
+      <DogDrawer.Screen name='Settings' component={Settings} initialParams={{fetchDogs: props.route.params.params.updateUserDogs}}  />
       <DogDrawer.Screen name='Statistics' component={Statistics} />
     </DogDrawer.Navigator>
   );

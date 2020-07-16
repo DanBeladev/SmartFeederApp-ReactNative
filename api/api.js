@@ -77,7 +77,27 @@ const howMuchLeft_api = async (token) =>{
     const res = await getRequest(`${API_URL}dogs/howmuch`,headers,{});
     console.log('res',res);
     return res;
-}
+};
+
+const deleteDog_api = async (dogId, token) =>{
+  const headers = createHeader(token);
+  const req_url = `${API_URL}dogs/${dogId}`;
+  
+  const config = {
+    method: 'DELETE',
+    headers,
+    data:{}
+  };
+  
+  const res = await Axios.delete(req_url,config);
+  return res;
+};
+
+const updateDog_api = async (dogId, token) =>{
+  const headers = createHeader(token);
+  const res = await Axios.put(`${API_URL}dogs/${dogId}`,headers,{});
+  return res;
+};
 
 export const API_INSTANCE = {
   login: login_api,
@@ -88,7 +108,9 @@ export const API_INSTANCE = {
   addHisun: addHisun_api,
   dropFood: dropFood_api,
   makeNoise: makeNoise_api,
-  howMuchLeft: howMuchLeft_api
+  howMuchLeft: howMuchLeft_api,
+  deleteDog: deleteDog_api,
+  updateDog: updateDog_api
 };
 
 const postRequest = async (url, body, headers = {}) => {

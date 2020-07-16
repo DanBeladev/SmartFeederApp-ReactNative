@@ -16,6 +16,7 @@ import { Input } from 'react-native-elements';
 import DogHeader from '../../generalComponents/Header/DogHeader.component';
 import { API_INSTANCE } from '../../api/api';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { getDate } from '../../generalComponents/Utils';
 
 class HisunimScreen extends React.Component {
   constructor(props) {
@@ -63,15 +64,6 @@ class HisunimScreen extends React.Component {
     }
   };
 
-  getDate = (date) => {
-    const t_date = new Date(date);
-    const year = t_date.getFullYear();
-    const month = t_date.getMonth() + 1;
-    const day = t_date.getDate();
-    const res = `${year} - ${month} - ${day}`;
-    return res;
-  };
-
   showTimepicker = () => {
     this.setState({ showDatePicker: true });
   };
@@ -79,7 +71,7 @@ class HisunimScreen extends React.Component {
   dateChanged = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     console.log(currentDate);
-    this.setState({ date: this.getDate(currentDate), showDatePicker: false });
+    this.setState({ date: getDate(currentDate), showDatePicker: false });
   };
 
   render() {
@@ -97,7 +89,7 @@ class HisunimScreen extends React.Component {
                 return (
                   <DataTable.Row key={hisun.name}>
                     <DataTable.Cell>{hisun.name}</DataTable.Cell>
-                    <DataTable.Cell>{this.getDate(hisun.date)} </DataTable.Cell>
+                    <DataTable.Cell>{getDate(hisun.date)} </DataTable.Cell>
                   </DataTable.Row>
                 );
               })}

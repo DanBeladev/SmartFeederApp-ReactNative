@@ -42,7 +42,7 @@ class DrawerContent extends Component {
               source={require('../../assets/hand.png')}
               size={120}
             />
-            <Title style={styles.title}>{this.props.dog.dogName}</Title>
+            <Title style={styles.title}>{this.props.dog.name}</Title>
             <Caption style={styles.caption}>Border Colley</Caption>
             <Caption style={styles.caption}>4 years@ Female</Caption>
           </View>
@@ -110,7 +110,13 @@ class DrawerContent extends Component {
               )}
               label='Settings'
               onPress={() => {
-                console.log('Settings');
+                 console.log(this.props.params);
+                 console.log()
+                this.props.navigation.navigate('Settings',{
+                  params: {
+                    updateUserDogs:'hello',
+                }
+                });
               }}
             />
           </Drawer.Section>

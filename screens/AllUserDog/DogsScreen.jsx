@@ -1,12 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { setDog } from '../../actions/dogsActions';
-import {
-  StyleSheet,
-  View,
-  Text,
-  ActivityIndicator,
-} from 'react-native';
+import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
 import Modal from 'react-native-modal';
 import DogComponent from './DogComponent';
 import * as firebase from 'firebase';
@@ -19,6 +14,7 @@ import { API_INSTANCE } from '../../api/api';
 class DogsScreen extends React.Component {
   constructor(props) {
     super(props);
+    console.log('in ctor');
     this.state = {
       isLoaded: false,
       allUserDogs: [],
@@ -29,12 +25,17 @@ class DogsScreen extends React.Component {
     this.dataBase = firebase.database();
     this.counter = 0;
   }
-  async componentDidMount() {
-    console.log('in dogs screen', this.props.user.userDetails);
+
+  fetchDogs = async () => {
     const { token } = this.props.user.userDetails;
     const data = await API_INSTANCE.getDogs(token);
     const dogs = [...data.data];
     this.setState({ allUserDogs: dogs, isLoaded: true });
+  };
+
+  async componentDidMount() {
+    console.log('in cdm');
+    this.fetchDogs();
   }
 
   buildForm = () => {
@@ -90,7 +91,7 @@ class DogsScreen extends React.Component {
   };
 
   // get object with values of form
-  formCallBack = async (fieldsToValue)  => {
+  formCallBack = async (fieldsToValue) => {
     let data = new FormData();
     data.append('name', fieldsToValue.dogName);
     data.append('gender', fieldsToValue.gender ? fieldsToValue.gender : 'male');
@@ -106,13 +107,12 @@ class DogsScreen extends React.Component {
       data.append('image', photo);
     }
     const { token } = this.props.user.userDetails;
-    const res = await API_INSTANCE.addDog(data,token);
-    if(res.data){
+    const res = await API_INSTANCE.addDog(data, token);
+    if (res.data) {
       const newDog = res.data;
-      const newDogsArray = [...this.state.allUserDogs,newDog];
-      this.setState({allUserDogs: newDogsArray, isModalVisible: false});
-    }
-    else{
+      const newDogsArray = [...this.state.allUserDogs, newDog];
+      this.setState({ allUserDogs: newDogsArray, isModalVisible: false });
+    } else {
       this.setState({ isModalVisible: false });
     }
   };
@@ -133,6 +133,7 @@ class DogsScreen extends React.Component {
                     dog={dog}
                     callBack={this.callBackForDogChoosing}
                     navigation={this.props.navigation}
+                    fetchDogs = {this.fetchDogs}
                   />
                 );
               })

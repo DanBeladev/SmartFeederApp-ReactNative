@@ -16,6 +16,7 @@ export default class DogComponent extends Component {
     this.props.callBack(this.props.dog);
     this.props.navigation.navigate('DogManagement', {
       screen: 'DogDetails',
+       params: { updateUserDogs: this.props.fetchDogs },
     });
   };
 
@@ -26,7 +27,6 @@ export default class DogComponent extends Component {
 
   render() {
     const { dog } = this.props;
-    console.log('dog from props: ',dog);
     const image = `${API_BASE_URL}${dog.image}`;
     return (
       <TouchableOpacity style={style.container} onPress={this.dogPressed}>
