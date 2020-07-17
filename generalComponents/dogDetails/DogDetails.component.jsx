@@ -31,7 +31,6 @@ class DogDetails extends React.Component {
     const { token } = this.props.user.userDetails
     const res = await API_INSTANCE.dropFood(token);
     if (res.data) {
-      console.log('food was dropped');
       this.setState({ isLoading: false });
     }
   };

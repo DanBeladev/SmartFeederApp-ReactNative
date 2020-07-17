@@ -110,13 +110,7 @@ class DrawerContent extends Component {
               )}
               label='Settings'
               onPress={() => {
-                 console.log(this.props.params);
-                 console.log()
-                this.props.navigation.navigate('Settings',{
-                  params: {
-                    updateUserDogs:'hello',
-                }
-                });
+                this.props.navigation.navigate('Settings');
               }}
             />
           </Drawer.Section>

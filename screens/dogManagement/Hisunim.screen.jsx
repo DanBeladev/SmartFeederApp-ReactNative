@@ -33,10 +33,8 @@ class HisunimScreen extends React.Component {
   componentDidMount = async () => {
     const { token } = this.props.user.userDetails;
     const {_id} = this.props.dog.currentDog;
-    console.log('dog :' ,_id)
     const res = await API_INSTANCE.getHisunim(_id, token);
     const hisunimFromApi = [...res.data];
-    console.log('hisunim from server: ',)
     this.setState({ hisunim: hisunimFromApi });
   };
 

@@ -30,7 +30,6 @@ function LoginStack() {
 }
 
 function DogManagemnetDrawer(props) {
-  console.log(props);
   return (
     <DogDrawer.Navigator
       initialRouteName='DogDetails'

@@ -20,11 +20,6 @@ export default class DogComponent extends Component {
     });
   };
 
-  componentDidMount() {
-    const { dog } = this.props;
-    console.log(dog);
-  }
-
   render() {
     const { dog } = this.props;
     const image = `${API_BASE_URL}${dog.image}`;

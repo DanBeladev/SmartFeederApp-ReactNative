@@ -1,28 +1,40 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+  Image,
+} from 'react-native';
+import { Avatar } from 'react-native-paper';
 import DogHeader from '../../generalComponents/Header/DogHeader.component';
-import { headerHeight } from '../../common/constants';
-import Form from '../../generalComponents/Templates/Form/Form';
+import { headerHeight, backgroundColor } from '../../common/constants';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { connect } from 'react-redux';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { getDate } from '../../generalComponents/Utils';
+import {
+  getDate,
+  openGallery,
+  getDateWithoutSpaces,
+} from '../../generalComponents/Utils';
 import RadioForm from 'react-native-simple-radio-button';
-import { API_INSTANCE } from '../../api/api';
+import { API_INSTANCE, API_BASE_URL } from '../../api/api';
 import { setOutDog } from '../../actions/dogsActions';
-
+import { Alert } from 'react-native';
+import DogBreedSelector from '../../generalComponents/DogBreedSelector';
 class Settings extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       toShowDatePicker: false,
-      name: props.dog.name,
-      date: props.dog.birthDate,
-      gender: props.dog.gender,
-      breed: 'Jack Rassel',
+      name: this.props.dog.name,
+      date: this.props.dog.birthDate,
+      gender: this.props.dog.gender,
+      image: this.props.dog.image,
+      breed: 'American Eskimo Dog (Miniature)',
       mealAmount: 30,
-      // gender: 0,
     };
 
     this.radioProps = [
@@ -30,53 +42,6 @@ class Settings extends React.Component {
       { label: 'Female', value: 1 },
     ];
   }
-
-  formCallBack = () => {
-    console.log('callback');
-  };
-  buildForm = () => {
-    let fields = [
-      {
-        type: 'text',
-        field: 'dogName',
-        title: 'Dog Name',
-        isMandetory: true,
-        labelVisibale: true,
-      },
-      {
-        type: 'radio',
-        field: 'gender',
-        title: 'Gender',
-        labelVisibale: true,
-        radioProps: [
-          { label: 'Male     ', value: 'Male' },
-          { label: 'Female', value: 'Female' },
-        ],
-      },
-      {
-        type: 'text',
-        field: 'age',
-        title: 'Age',
-        labelVisibale: true,
-        // valueType: 'Integer',
-      },
-      {
-        type: 'pic',
-        field: 'dogImg',
-        labelVisibale: false,
-        title: 'Upload Image',
-      },
-    ];
-    return (
-      <Form
-        fields={fields}
-        callBack={this.formCallBack}
-        closeForm={() => {
-          this.setState({ isModalVisible: false });
-        }}
-      ></Form>
-    );
-  };
   showDatePicker = () => {
     this.setState({ toShowDatePicker: true });
   };
@@ -88,41 +53,92 @@ class Settings extends React.Component {
     }
   };
 
+  dogChanged = (value) => {
+    console.log('in settings: ', value);
+    this.setState({ breed: value });
+  };
+
   onCancelClicked = () => {
+    console.log('state: ', this.state.image);
+    console.log('props: ', this.props.dog.image);
+    console.log('props gender', this.props.dog.gender);
     this.setState({
       name: this.props.dog.name,
       date: this.props.dog.birthDate,
-      breed: 'Jack Rassel',
+      breed: this.props.breed,
+      gender: this.props.dog.gender,
+      image: this.props.dog.image,
       mealAmount: 30,
-      gender: 0,
     });
   };
 
-  onSaveClicked = () => {};
+  getOnlyChangedFields = () => {
+    const res = [];
+    this.state.name !== this.props.dog.name
+      ? res.push({ name: this.state.name })
+      : null;
+    this.state.gender !== this.props.dog.gender
+      ? res.push({ gender: this.state.gender })
+      : null;
+    this.state.date !== this.props.dog.birthDate
+      ? res.push({ birthDate: getDateWithoutSpaces(this.state.date) })
+      : null;
+    this.state.image !== this.props.dog.image
+      ? res.push({ image: this.state.image })
+      : null;
+      // this.state.mealAmount !== this.props.dog.mealAmount
+      // ? res.push({ mealAmount: this.state.mealAmount })
+      // : null;
+      // this.state.breed !== this.props.dog.breed
+      // ? res.push({ breed: this.state.breed })
+      // : null;
+      return res;
+  };
+
+  onSaveClicked = async () => {
+    const { _id, name } = this.props.dog;
+    const { token } = this.props.user;
+    const changedFields = this.getOnlyChangedFields();
+    const res = await API_INSTANCE.updateDog(_id, token, {changes: changedFields});
+    if (res.status === 200) {
+      Alert.alert(`${name} was updated`);
+      this.props.navigation.navigate('DogManagment');
+      await this.props.route.params.fetchDogs();
+    } else {
+      console.log('error with updating dog with id: ', _id);
+    }
+  };
+
+  chooseImage = async () => {
+    const res = openGallery((data) => {
+      this.setState({ image: data });
+    });
+  };
 
   onDeleteClicked = async () => {
-    const { _id } = this.props.dog;
+    const { _id, name } = this.props.dog;
     const { token } = this.props.user;
     const res = await API_INSTANCE.deleteDog(_id, token);
     if (res.status === 204) {
-    console.log('dog deleted: ');
-    console.log('params: ',this.props.route.parmas);
-    this.props.navigation.jumpTo('Home');
-    await this.props.route.params.fetchDogs();
-    }else{
-      console.log('error with deleting dog with id: ',_id);
+      Alert.alert(`${name} was deleted successfuly`);
+      this.props.navigation.jumpTo('Home');
+      await this.props.route.params.fetchDogs();
+    } else {
+      console.log('error with deleting dog with id: ', _id);
     }
   };
 
   render() {
     const date = getDate(this.state.date);
     const mealAmount = `${this.state.mealAmount}`;
+    const gender =
+      this.state.gender === 'Male' || this.state.gender === '0' ? 0 : 1;
     return (
       <View style={styles.container}>
         <DogHeader {...this.props} />
         <View style={styles.formContainer}>
           <View>
-            <Text style={styles.header}>Settings</Text>
+            {/* <Text style={styles.header}>Settings</Text> */}
             <ScrollView>
               <View style={styles.inputContainer}>
                 <TextInput
@@ -134,15 +150,7 @@ class Settings extends React.Component {
                     this.setState({ name: value });
                   }}
                 />
-                <TextInput
-                  style={styles.textInput}
-                  placeholder='Breed'
-                  maxLength={20}
-                  value={this.state.breed}
-                  onChangeText={(value) => {
-                    this.setState({ breed: value });
-                  }}
-                />
+
                 <TextInput
                   style={styles.textInput}
                   placeholder='Meal Amount'
@@ -166,23 +174,44 @@ class Settings extends React.Component {
                     onChange={this.dateChanged}
                   />
                 )}
-                <RadioForm
-                  radio_props={this.radioProps}
-                  initial={this.state.gender}
-                  formHorizontal={true}
-                  labelHorizontal={true}
-                  buttonColor={'#2196f3'}
-                  animation={true}
-                  key={this.state.gender}
-                  onPress={(value) => {
-                    console.log(value);
-                    this.setState({ gender: value });
-                  }}
+                <DogBreedSelector
+                  breed={this.state.breed}
+                  handleChanged={this.dogChanged}
                 />
+                <View style={styles.gender}>
+                  <RadioForm
+                    radio_props={this.radioProps}
+                    initial={gender}
+                    formHorizontal={true}
+                    labelHorizontal={false}
+                    buttonColor={'#2196f3'}
+                    animation={true}
+                    key={gender}
+                    onPress={(value) => {
+                      console.log(value);
+                      this.setState({ gender: value });
+                    }}
+                  />
+                </View>
+                <TouchableOpacity onPress={this.chooseImage}>
+                  {this.state.image === this.props.dog.image ? (
+                    <Avatar.Image
+                      size={200}
+                      style={styles.image}
+                      source={{ uri: `${API_BASE_URL}${this.state.image}` }}
+                    />
+                  ) : (
+                    <Avatar.Image
+                      size={200}
+                      style={styles.image}
+                      source={this.state.image}
+                    />
+                  )}
+                </TouchableOpacity>
               </View>
             </ScrollView>
             <View style={styles.iconsContainer}>
-              <TouchableOpacity onPress={() => console.log('ok')}>
+              <TouchableOpacity onPress={this.onSaveClicked}>
                 <MaterialCommunityIcons name='check' color='green' size={50} />
               </TouchableOpacity>
               <TouchableOpacity onPress={this.onDeleteClicked}>
@@ -225,9 +254,11 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     flex: 1,
-    justifyContent: 'center',
+    marginTop: 50,
+    justifyContent: 'space-between',
     paddingTop: 45,
     backgroundColor: '#F5FCFF',
+    backgroundColor: backgroundColor,
   },
   header: {
     fontSize: 25,
@@ -239,7 +270,8 @@ const styles = StyleSheet.create({
     paddingTop: 15,
   },
   textInput: {
-    borderColor: '#CCCCCC',
+    margin: 10,
+    borderColor: 'green',
     borderTopWidth: 1,
     borderBottomWidth: 1,
     height: 50,
@@ -252,4 +284,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
+  image: {
+    alignSelf: 'center',
+    margin: 10,
+  },
+  gender: { alignSelf: 'center', margin: 10 },
 });

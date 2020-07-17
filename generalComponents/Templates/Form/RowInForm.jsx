@@ -13,7 +13,6 @@ export default class RowInForm extends React.Component {
     this.state = {
       val: null,
     };
-    this.image;
     this.getPermissionAsync = this.getPermissionAsync.bind(this);
     this.pickImage = this.pickImage.bind(this);
   }
@@ -29,8 +28,7 @@ export default class RowInForm extends React.Component {
         quality: 1,
       });
       if (!result.cancelled) {
-        this.image = result.uri;
-        this.props.onGettingValue({ uri: this.image }, this.props.params.field);
+        this.props.onGettingValue({ uri: result.uri }, this.props.params.field);
       }
     } catch (E) {
       console.log(E);
