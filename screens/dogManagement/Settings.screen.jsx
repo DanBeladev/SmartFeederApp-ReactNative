@@ -196,20 +196,19 @@ class Settings extends React.Component {
                 <TouchableOpacity onPress={this.chooseImage}>
                   {this.state.image === this.props.dog.image ? (
                     <Avatar.Image
-                      size={200}
+                      size={100}
                       style={styles.image}
                       source={{ uri: `${API_BASE_URL}${this.state.image}` }}
                     />
                   ) : (
                     <Avatar.Image
-                      size={200}
+                      size={100}
                       style={styles.image}
                       source={this.state.image}
                     />
                   )}
                 </TouchableOpacity>
               </View>
-            </ScrollView>
             <View style={styles.iconsContainer}>
               <TouchableOpacity onPress={this.onSaveClicked}>
                 <MaterialCommunityIcons name='check' color='green' size={50} />
@@ -221,6 +220,7 @@ class Settings extends React.Component {
                 <MaterialCommunityIcons name='cancel' color='grey' size={50} />
               </TouchableOpacity>
             </View>
+            </ScrollView>
           </View>
         </View>
       </View>

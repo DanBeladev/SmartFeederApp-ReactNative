@@ -100,43 +100,55 @@ const fetchDogNames_api = async () => {
 };
 
 const getFilteredData = async (filteredData) => {
-  // console.log('in tem fun', filteredData);
+  console.log('in tem fun', filteredData);
   let data = new FormData();
 
-  for (let item of filteredData) {
-    // console.log('in foreach..item: ',item);
-    const item1 = JSON.parse(JSON.stringify(item));
-    // console.log('after parsing: ', item1);
-
-    const keysArray = Object.keys(item);
-    // console.log('keysArray: ', keysArray);
-    const key = keysArray[0];
-    // console.log('key:' ,key);
+  Object.entries(filteredData).forEach(([key, value]) => {
     if (key === 'image') {
       const array = item[key].split('/');
       const name = array[array.length - 1];
       const photo = {
-        uri: item.key,
+        uri: item[key],
         type: 'image/jpeg',
         name: name,
       };
       data.append(key, photo);
     } else {
-      // console.log('item: ',item);
-      // console.log('item.key: ',item[key]);
-      const value = item[key];
-      // console.log('value:', value);
       data.append(key, value);
     }
-  }
-  // console.log('filtered data:', data);
+  });
   return data;
+  //   const keysArray = Object.keys(item);
+  //   console.log('keysArray: ', keysArray);
+  //   const key = keysArray[0];
+  //   console.log('key:', key);
+  //   if (key === 'image') {
+  //     const array = item[key].split('/');
+  //     const name = array[array.length - 1];
+  //     const photo = {
+  //       uri: item.key,
+  //       type: 'image/jpeg',
+  //       name: name,
+  //     };
+  //     data.append(key, photo);
+  //   } else {
+  //     console.log('item: ', item);
+  //     console.log('item.key: ', item[key]);
+  //     const value = item[key];
+  //     console.log('value:', value);
+  //     data.append(key, value);
+  //   }
+  // }
+  // console.log('filtered data:', data);
 };
 
 const updateDog_api = async (dogId, token, changesObj) => {
   const { changes } = changesObj;
+  console.log('token: ', token);
   const req_url = `${API_URL}dogs/update/${dogId}`;
-  const data = getFilteredData(changes);
+  // const data = await getFilteredData(changes);
+  const data = new FormData();
+  data.append('name','yyy')
   console.log('data: ', data);
   const config = {
     method: 'PUT',
