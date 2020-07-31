@@ -16,6 +16,9 @@ class DogDetails extends React.Component {
   componentDidMount() {
     this.spring();
   }
+  componentWillUnmount(){
+    console.log("im died");
+  }
 
   spring = () => {
     this.springValue.setValue(0.3);
@@ -34,6 +37,7 @@ class DogDetails extends React.Component {
       this.setState({ isLoading: false });
     }
   };
+  
   render() {
     return this.state.isLoading ? (
      <Spinner />

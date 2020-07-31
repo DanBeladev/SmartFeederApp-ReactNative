@@ -6,19 +6,32 @@ import RadioForm from 'react-native-simple-radio-button';
 import { Image, View, Text, StyleSheet, Picker, TextInput } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Button } from 'react-native-paper';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { getDate } from '../../../generalComponents/Utils';
 
 export default class RowInForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       val: null,
+      showDatePicker:false,
+      chosenDate:undefined
     };
     this.getPermissionAsync = this.getPermissionAsync.bind(this);
     this.pickImage = this.pickImage.bind(this);
+    this.dateChanged=this.dateChanged.bind(this);
   }
   componentDidMount() {
     this.getPermissionAsync();
   }
+
+  dateChanged(event, selectedDate){
+    this.setState({showDatePicker: false});
+    let date = selectedDate;
+    this.props.onGettingValue(date, this.props.params.field)
+    this.setState({chosenDate:date});
+  };
+
   async pickImage() {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -73,18 +86,21 @@ export default class RowInForm extends React.Component {
         break;
       case 'combo':
         this.elem = (
+          <View style={{...styles.elements, height:60}}>
           <Picker
-            style={styles.combo}
             selectedValue={this.state.val}
             onValueChange={(value) => {
               this.setState({ val: value });
               this.props.onGettingValue(value, this.props.params.field);
             }}
           >
+            <Picker.Item key={this.props.params.title} label={this.props.params.title} value={0} />
             {this.props.params.data.map((v) => (
               <Picker.Item key={v.label} label={v.label} value={v.value} />
             ))}
           </Picker>
+          </View>
+
         );
         break;
       case 'pic':
@@ -103,6 +119,16 @@ export default class RowInForm extends React.Component {
             <Text style={styles.addPictureText}>{this.props.params.title}</Text>
           </TouchableOpacity>
         );
+      case 'date':
+        this.elem =(
+          <View style={styles.date}>
+            <Button onPress={() => {this.setState({showDatePicker:true})}} style={styles.addPicture}>
+              {this.props.params.title}
+            </Button>
+            <Text style={styles.text}>{this.state.chosenDate? getDate(this.state.chosenDate):"No Date Chosen" }</Text>
+          </View>  
+        )  
+
     }
     return (
       <View style={styles.container}>
@@ -112,6 +138,11 @@ export default class RowInForm extends React.Component {
           </Text>
         }
         {this.elem}
+        {this.state.showDatePicker? <DateTimePicker
+        value={new Date()}
+        display='spinner'
+        onChange = {this.dateChanged}
+        />:null}
       </View>
     );
   }
@@ -159,4 +190,11 @@ const styles = StyleSheet.create({
     width: '30%',
     backgroundColor: 'white',
   },
+  date:{
+    flexDirection:'row'
+  },
+  text: {
+    top:10,
+    left:10
+  }
 });

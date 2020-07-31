@@ -10,6 +10,7 @@ import Form from '../../generalComponents/Templates/Form/Form';
 import Header from '../../generalComponents/Header/Header';
 import { backgroundColor, headerHeight } from '../../common/constants';
 import { API_INSTANCE } from '../../api/api';
+import {getDateWithoutSpaces} from '../../generalComponents/Utils'
 
 class DogsScreen extends React.Component {
   constructor(props) {
@@ -36,6 +37,11 @@ class DogsScreen extends React.Component {
   async componentDidMount() {
     console.log('in cdm');
     this.fetchDogs();
+    let po = await API_INSTANCE.fetchDogNames();
+    po = [...po.data];
+    //console.log(this.allDogsBreeds);
+    this.allDogsBreeds = po.map(v=>{return {label:v.name, value:v.name}});
+    console.log(this.allDogsBreeds);
   }
 
   buildForm = () => {
@@ -58,11 +64,10 @@ class DogsScreen extends React.Component {
         ],
       },
       {
-        type: 'text',
-        field: 'age',
-        title: 'Age',
-        labelVisibale: true,
-        // valueType: 'Integer',
+        type:'combo',
+        field:'breed',
+        data:this.allDogsBreeds,
+        title:"Choose breed"
       },
       {
         type: 'pic',
@@ -70,6 +75,11 @@ class DogsScreen extends React.Component {
         labelVisibale: false,
         title: 'Upload Image',
       },
+      {
+        type:'date',
+        field:'date',
+        title: 'Birthdate'
+      }
     ];
     return (
       <Form
@@ -95,7 +105,8 @@ class DogsScreen extends React.Component {
     let data = new FormData();
     data.append('name', fieldsToValue.dogName);
     data.append('gender', fieldsToValue.gender ? fieldsToValue.gender : 'male');
-    data.append('birthDate', '2002-11-15');
+    data.append('breed', fieldsToValue.breed ? fieldsToValue.breed : null);
+    data.append('birthDate',getDateWithoutSpaces(fieldsToValue.date));
     if (fieldsToValue.dogImg && fieldsToValue.dogImg.uri) {
       const array = fieldsToValue.dogImg.uri.split('/');
       const name = array[array.length - 1];

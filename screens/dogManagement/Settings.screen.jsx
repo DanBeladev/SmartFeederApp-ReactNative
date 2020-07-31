@@ -27,13 +27,14 @@ import DogBreedSelector from '../../generalComponents/DogBreedSelector';
 class Settings extends React.Component {
   constructor(props) {
     super(props);
+    console.log(this.props.dog);
     this.state = {
       toShowDatePicker: false,
       name: this.props.dog.name,
       date: this.props.dog.birthDate,
       gender: this.props.dog.gender,
       image: this.props.dog.image,
-      breed: 'American Eskimo Dog (Miniature)',
+      breed: this.props.dog.breed,
       mealAmount: 30,
     };
 
@@ -209,8 +210,7 @@ class Settings extends React.Component {
                   )}
                 </TouchableOpacity>
               </View>
-            </ScrollView>
-            <View style={styles.iconsContainer}>
+              <View style={styles.iconsContainer}>
               <TouchableOpacity onPress={this.onSaveClicked}>
                 <MaterialCommunityIcons name='check' color='green' size={50} />
               </TouchableOpacity>
@@ -221,6 +221,7 @@ class Settings extends React.Component {
                 <MaterialCommunityIcons name='cancel' color='grey' size={50} />
               </TouchableOpacity>
             </View>
+            </ScrollView>
           </View>
         </View>
       </View>
