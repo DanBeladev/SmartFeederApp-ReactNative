@@ -39,9 +39,10 @@ class DogsScreen extends React.Component {
     this.fetchDogs();
     let po = await API_INSTANCE.fetchDogNames();
     po = [...po.data];
-    //console.log(this.allDogsBreeds);
     this.allDogsBreeds = po.map(v=>{return {label:v.name, value:v.name}});
-    console.log(this.allDogsBreeds);
+  }
+  componentWillUnmount(){
+    console.log("bye bye");
   }
 
   buildForm = () => {
@@ -129,6 +130,8 @@ class DogsScreen extends React.Component {
   };
 
   render() {
+    console.log("dsdsdsd");
+    console.log(this.props.user);
     const allDogsObj = this.state.allUserDogs;
 
     return (

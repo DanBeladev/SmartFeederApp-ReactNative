@@ -16,7 +16,6 @@ import { signOut } from '../../actions/usersActions';
 
 class DrawerContent extends Component{
 render(){
-
   const {userDetails} = this.props.user;
   return (
     <DrawerContentScrollView {...this.props}>
@@ -44,7 +43,7 @@ render(){
               />
             )}
             label="Profile"
-            onPress={() => {this.props.navigation.jumpTo('Home')}}
+            onPress={() => {this.props.navigation.jumpTo('Main')}}
           />
           <DrawerItem
             icon={({ color, size }) => (
@@ -65,7 +64,7 @@ render(){
               />
             )}
             label="Logout"
-            onPress={() => {this.props.Logout()}}
+            onPress={() => {this.props.Logout();}}
           />
         </Drawer.Section>
       </View>

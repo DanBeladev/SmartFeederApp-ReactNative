@@ -122,7 +122,7 @@ class Settings extends React.Component {
     const res = await API_INSTANCE.deleteDog(_id, token);
     if (res.status === 204) {
       Alert.alert(`${name} was deleted successfuly`);
-      this.props.navigation.jumpTo('Home');
+      this.props.navigation.navigate('Home');
       await this.props.route.params.fetchDogs();
     } else {
       console.log('error with deleting dog with id: ', _id);

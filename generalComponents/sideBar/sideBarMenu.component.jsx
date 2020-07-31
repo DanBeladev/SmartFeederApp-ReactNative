@@ -35,7 +35,7 @@ import { connect } from 'react-redux';
     ];
   }
   home = (screenToNavigate) => {
-    this.props.navigation.jumpTo('Home');
+    this.props.navigation.jumpTo('Mom');
   };
 
   second = (screenToNavigate) => {

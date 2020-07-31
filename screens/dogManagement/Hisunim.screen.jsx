@@ -28,6 +28,7 @@ class HisunimScreen extends React.Component {
       date: '',
       showDatePicker: false,
     };
+    console.log("fdfdfdf");
   }
 
   componentDidMount = async () => {

@@ -18,16 +18,7 @@ const Stack = createStackNavigator();
 const UserDrawer = createDrawerNavigator();
 const DogDrawer = createDrawerNavigator();
 
-function LoginStack() {
-  return (
-    <Stack.Navigator initialRouteName='Login'screenOptions={{
-      headerShown: false
-    }}>
-      <Stack.Screen name='Login' component={Login} />
-      <Stack.Screen name='SignIn' component={SignInScreen} />
-    </Stack.Navigator>
-  );
-}
+
 
 function DogManagemnetDrawer(props) {
   return (
@@ -46,13 +37,34 @@ function DogManagemnetDrawer(props) {
 function HomeDrawer() {
   return (
     <UserDrawer.Navigator
-      initialRouteName='Home'
+      initialRouteName='Main'
       drawerContent={(props) => <DrawerContent {...props} />}
     >
-      <UserDrawer.Screen name='Home' component={DogsScreen} />
+      <UserDrawer.Screen name='Main' component={DogsScreen} />
       <UserDrawer.Screen name='Fucker' component={Header} />
-      <UserDrawer.Screen name='DogManagement' component={DogManagemnetDrawer} />
     </UserDrawer.Navigator>
+  );
+}
+
+function LoginStack() {
+  return (
+    <Stack.Navigator initialRouteName='Login'screenOptions={{
+      headerShown: false
+    }}>
+      <Stack.Screen name='Login' component={Login} />
+      <Stack.Screen name='SignIn' component={SignInScreen} />
+    </Stack.Navigator>
+  );
+}
+
+function AfterLoginStack(){
+  return (
+    <Stack.Navigator initialRouteName='Home'screenOptions={{
+      headerShown: false
+    }}>
+      <Stack.Screen name='Home' component={HomeDrawer} />
+      <Stack.Screen name='DogManagement' component={DogManagemnetDrawer} />
+    </Stack.Navigator>
   );
 }
 
@@ -60,7 +72,7 @@ class Navigator extends Component {
   render() {
     return (
       <NavigationContainer>
-        {this.props.user.isSignIn ? <HomeDrawer /> : <LoginStack />}
+        {this.props.user.isSignIn ? <AfterLoginStack /> : <LoginStack />}
       </NavigationContainer>
     );
   }
