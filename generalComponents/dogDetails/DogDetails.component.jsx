@@ -4,6 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { API_INSTANCE } from '../../api/api';
 import Spinner from './Spinner';
 import { connect } from 'react-redux';
+import { Button } from 'react-native-paper';
 
 class DogDetails extends React.Component {
   constructor(props) {
@@ -15,6 +16,9 @@ class DogDetails extends React.Component {
   }
   componentDidMount() {
     this.spring();
+  }
+  componentWillUnmount(){
+    console.log("im died");
   }
 
   spring = () => {
@@ -34,6 +38,7 @@ class DogDetails extends React.Component {
       this.setState({ isLoading: false });
     }
   };
+
   render() {
     return this.state.isLoading ? (
      <Spinner />

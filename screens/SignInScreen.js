@@ -54,8 +54,15 @@ class SignInScreen extends Component {
       if (data.error) {
         this.setState({ errorMessage: data.error });
       } else {
-        console.log(data);
-        this.props.setUser(data);
+        const data = await API_INSTANCE.login(
+          user.email,
+          user.password
+        );
+        if (data.error) {
+          this.setState({ errorMessage: data.error });
+        } else {
+          this.props.setUser(data.data);
+        }
       }
     } else {
       this.setState({ errorMessage: 'Please insert details' });

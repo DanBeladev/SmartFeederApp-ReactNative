@@ -16,7 +16,7 @@ export default class DogComponent extends Component {
     this.props.callBack(this.props.dog);
     this.props.navigation.navigate('DogManagement', {
       screen: 'DogDetails',
-       params: { updateUserDogs: this.props.fetchDogs },
+      params: { updateUserDogs: this.props.fetchDogs },
     });
   };
 

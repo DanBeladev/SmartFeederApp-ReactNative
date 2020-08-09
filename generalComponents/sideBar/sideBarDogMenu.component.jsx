@@ -32,6 +32,10 @@ class DrawerContent extends Component {
   }
 }
 
+goPrevScreen = ()=>{
+  this.props.navigation.navigate("Home")
+}
+
   render() {
     return (
       <DrawerContentScrollView {...this.props}>
@@ -120,7 +124,7 @@ class DrawerContent extends Component {
               )}
               label='Home'
               onPress={() => {
-                this.props.navigation.jumpTo('Home');
+                this.goPrevScreen();
               }}
             />
           </Drawer.Section>

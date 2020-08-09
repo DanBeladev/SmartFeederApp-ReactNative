@@ -27,13 +27,14 @@ import DogBreedSelector from '../../generalComponents/DogBreedSelector';
 class Settings extends React.Component {
   constructor(props) {
     super(props);
+    console.log(this.props.dog);
     this.state = {
       toShowDatePicker: false,
       name: this.props.dog.name,
       date: this.props.dog.birthDate,
       gender: this.props.dog.gender,
       image: this.props.dog.image,
-      breed: 'American Eskimo Dog (Miniature)',
+      breed: this.props.dog.breed,
       mealAmount: 30,
     };
 
@@ -121,7 +122,7 @@ class Settings extends React.Component {
     const res = await API_INSTANCE.deleteDog(_id, token);
     if (res.status === 204) {
       Alert.alert(`${name} was deleted successfuly`);
-      this.props.navigation.jumpTo('Home');
+      this.props.navigation.navigate('Home');
       await this.props.route.params.fetchDogs();
     } else {
       console.log('error with deleting dog with id: ', _id);
@@ -209,7 +210,7 @@ class Settings extends React.Component {
                   )}
                 </TouchableOpacity>
               </View>
-            <View style={styles.iconsContainer}>
+              <View style={styles.iconsContainer}>
               <TouchableOpacity onPress={this.onSaveClicked}>
                 <MaterialCommunityIcons name='check' color='green' size={50} />
               </TouchableOpacity>
