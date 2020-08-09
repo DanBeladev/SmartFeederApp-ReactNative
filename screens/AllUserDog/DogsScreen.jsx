@@ -4,11 +4,11 @@ import { setDog } from '../../actions/dogsActions';
 import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
 import Modal from 'react-native-modal';
 import DogComponent from './DogComponent';
-import * as firebase from 'firebase';
 import ActionButton from 'react-native-action-button';
 import Form from '../../generalComponents/Templates/Form/Form';
 import Header from '../../generalComponents/Header/Header';
 import { backgroundColor, headerHeight } from '../../common/constants';
+import {getAllDogFormFields} from './dogFormFields'
 import { API_INSTANCE } from '../../api/api';
 import {getDateWithoutSpaces} from '../../generalComponents/Utils'
 
@@ -22,9 +22,6 @@ class DogsScreen extends React.Component {
       isModalVisible: false,
       currentUserID: '',
     };
-    this.storage = firebase.storage().ref();
-    this.dataBase = firebase.database();
-    this.counter = 0;
   }
 
   fetchDogs = async () => {
@@ -37,51 +34,13 @@ class DogsScreen extends React.Component {
   async componentDidMount() {
     console.log('in cdm');
     this.fetchDogs();
-    let po = await API_INSTANCE.fetchDogNames();
-    po = [...po.data];
-    this.allDogsBreeds = po.map(v=>{return {label:v.name, value:v.name}});
   }
   componentWillUnmount(){
     console.log("bye bye");
   }
 
   buildForm = () => {
-    let fields = [
-      {
-        type: 'text',
-        field: 'dogName',
-        title: 'Dog Name',
-        isMandetory: true,
-        labelVisibale: true,
-      },
-      {
-        type: 'radio',
-        field: 'gender',
-        title: 'Gender',
-        labelVisibale: true,
-        radioProps: [
-          { label: 'Male     ', value: 'Male' },
-          { label: 'Female', value: 'Female' },
-        ],
-      },
-      {
-        type:'combo',
-        field:'breed',
-        data:this.allDogsBreeds,
-        title:"Choose breed"
-      },
-      {
-        type: 'pic',
-        field: 'dogImg',
-        labelVisibale: false,
-        title: 'Upload Image',
-      },
-      {
-        type:'date',
-        field:'date',
-        title: 'Birthdate'
-      }
-    ];
+    let fields = getAllDogFormFields(this.allDogsBreeds);
     return (
       <Form
         fields={fields}
@@ -104,10 +63,11 @@ class DogsScreen extends React.Component {
   // get object with values of form
   formCallBack = async (fieldsToValue) => {
     let data = new FormData();
-    data.append('name', fieldsToValue.dogName);
+    data.append('name', fieldsToValue.name);
     data.append('gender', fieldsToValue.gender ? fieldsToValue.gender : 'male');
     data.append('breed', fieldsToValue.breed ? fieldsToValue.breed : null);
     data.append('birthDate',getDateWithoutSpaces(fieldsToValue.date));
+    data.append('espSerialNumber', fieldsToValue.espSerialNumber? fieldsToValue.espSerialNumber:null);
     if (fieldsToValue.dogImg && fieldsToValue.dogImg.uri) {
       const array = fieldsToValue.dogImg.uri.split('/');
       const name = array[array.length - 1];

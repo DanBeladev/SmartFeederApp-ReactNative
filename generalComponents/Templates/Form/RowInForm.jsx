@@ -61,10 +61,11 @@ export default class RowInForm extends React.Component {
     }
     switch (this.props.params.type) {
       case 'text':
+      console.log(this.props.params)
         this.elem = (
           <TextInput
             style={styles.elements}
-            placeholder={this.props.title}
+            placeholder={this.props.params.val?this.props.params.val:this.props.title}
             onChangeText={(val) =>
               this.props.onGettingValue(val, this.props.params.field)
             }
@@ -75,7 +76,7 @@ export default class RowInForm extends React.Component {
         this.elem = (
           <RadioForm
             radio_props={this.props.params.radioProps}
-            initial={0}
+            initial={this.props.params.val?this.props.params.val:0}
             onPress={(value) =>
               this.props.onGettingValue(value, this.props.params.field)
             }
@@ -94,7 +95,10 @@ export default class RowInForm extends React.Component {
               this.props.onGettingValue(value, this.props.params.field);
             }}
           >
-            <Picker.Item key={this.props.params.title} label={this.props.params.title} value={0} />
+            {console.log(this.props.params.val) && this.props.params.val?
+              <Picker.Item key={this.props.params.val} label={this.props.params.val} value={this.props.params.val}/>
+              :<Picker.Item key={this.props.params.title} label={this.props.params.title} value={0} />
+            }
             {this.props.params.data.map((v) => (
               <Picker.Item key={v.label} label={v.label} value={v.value} />
             ))}
@@ -125,7 +129,8 @@ export default class RowInForm extends React.Component {
             <Button onPress={() => {this.setState({showDatePicker:true})}} style={styles.addPicture}>
               {this.props.params.title}
             </Button>
-            <Text style={styles.text}>{this.state.chosenDate? getDate(this.state.chosenDate):"No Date Chosen" }</Text>
+            <Text style={styles.text}>{this.state.chosenDate? getDate(this.state.chosenDate):
+              (this.props.params.val)?getDate(this.props.params.val):"No Chosen Date" }</Text>
           </View>  
         )  
 

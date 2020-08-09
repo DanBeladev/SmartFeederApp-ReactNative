@@ -66,7 +66,7 @@ export default class Form extends React.Component {
               }
             }}
           >
-            <Text style={styles.textBtn}>Add Dog</Text>
+            <Text style={styles.textBtn}>Submit</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.cancelBtn}

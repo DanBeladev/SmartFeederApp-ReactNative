@@ -1,120 +1,67 @@
 import React from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   ScrollView,
-  TextInput,
-  Image,
+  Button,
 } from 'react-native';
-import { Avatar } from 'react-native-paper';
 import DogHeader from '../../generalComponents/Header/DogHeader.component';
 import { headerHeight, backgroundColor } from '../../common/constants';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { connect } from 'react-redux';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import {
-  getDate,
-  openGallery,
-  getDateWithoutSpaces,
-} from '../../generalComponents/Utils';
-import RadioForm from 'react-native-simple-radio-button';
 import { API_INSTANCE, API_BASE_URL } from '../../api/api';
 import { setOutDog } from '../../actions/dogsActions';
 import { Alert } from 'react-native';
-import DogBreedSelector from '../../generalComponents/DogBreedSelector';
+import Form from '../../generalComponents/Templates/Form/Form'
+import {getDateWithoutSpaces} from '../../generalComponents/Utils'
+import {getAllDogFormFields} from '../AllUserDog/dogFormFields'
+
 class Settings extends React.Component {
   constructor(props) {
     super(props);
-    console.log(this.props.dog);
-    this.state = {
-      toShowDatePicker: false,
-      name: this.props.dog.name,
-      date: this.props.dog.birthDate,
-      gender: this.props.dog.gender,
-      image: this.props.dog.image,
-      breed: this.props.dog.breed,
-      mealAmount: 30,
-    };
-
-    this.radioProps = [
-      { label: 'Male', value: 0 },
-      { label: 'Female', value: 1 },
-    ];
   }
-  showDatePicker = () => {
-    this.setState({ toShowDatePicker: true });
-  };
-  dateChanged = (event, selectedDate) => {
-    if (selectedDate) {
-      this.setState({ date: selectedDate, toShowDatePicker: false });
-    } else {
-      this.setState({ toShowDatePicker: false });
-    }
-  };
 
-  dogChanged = (value) => {
-    console.log('in settings: ', value);
-    this.setState({ breed: value });
-  };
+  getOnlyChangedFields = (fieldsToValue) =>{
+    const dog = this.props.dog;
+    return Object.keys(fieldsToValue).filter(v=>dog[v]!==fieldsToValue[v]);
+  }
 
-  onCancelClicked = () => {
-    console.log('state: ', this.state.image);
-    console.log('props: ', this.props.dog.image);
-    console.log('props gender', this.props.dog.gender);
-    this.setState({
-      name: this.props.dog.name,
-      date: this.props.dog.birthDate,
-      breed: this.props.breed,
-      gender: this.props.dog.gender,
-      image: this.props.dog.image,
-      mealAmount: 30,
-    });
-  };
-
-  getOnlyChangedFields = () => {
-    const res = [];
-    this.state.name !== this.props.dog.name
-      ? res.push({ name: this.state.name })
-      : null;
-    this.state.gender !== this.props.dog.gender
-      ? res.push({ gender: this.state.gender })
-      : null;
-    this.state.date !== this.props.dog.birthDate
-      ? res.push({ birthDate: getDateWithoutSpaces(this.state.date) })
-      : null;
-    this.state.image !== this.props.dog.image
-      ? res.push({ image: this.state.image })
-      : null;
-      // this.state.mealAmount !== this.props.dog.mealAmount
-      // ? res.push({ mealAmount: this.state.mealAmount })
-      // : null;
-      // this.state.breed !== this.props.dog.breed
-      // ? res.push({ breed: this.state.breed })
-      // : null;
-      return res;
-  };
-
-  onSaveClicked = async () => {
+  onSaveClicked = async (fieldsToValue) => {
     const { _id, name } = this.props.dog;
     const { token } = this.props.user;
-    const changedFields = this.getOnlyChangedFields();
-    const res = await API_INSTANCE.updateDog(_id, token, {changes: changedFields});
+    const changedFields = this.getOnlyChangedFields(fieldsToValue);
+    console.log("the fields that changed:");
+    console.log(changedFields);
+    let data = new FormData();
+    changedFields.forEach(v=>{
+      if(v!=="dogImg"){
+        if(v=="birthDate"){
+          fieldsToValue[v]=getDateWithoutSpaces(fieldsToValue[v]);
+        }
+        data.append(v, fieldsToValue[v]);
+      }
+      else{
+        if(fieldsToValue.dogImg.uri){
+          const array = fieldsToValue.dogImg.uri.split('/');
+          const name = array[array.length - 1];
+          var photo = {
+            uri: fieldsToValue.dogImg.uri,
+            type: 'image/jpeg',
+            name: name,
+          };
+          data.append('image', photo);
+        }
+      }  
+    })
+    const res = await API_INSTANCE.updateDog(_id, token, data)
     if (res.status === 200) {
-      Alert.alert(`${name} was updated`);
-      this.props.navigation.navigate('DogManagment');
+      Alert.alert(`${name} was updated successfuly`);
+      this.props.navigation.navigate('Home');
       await this.props.route.params.fetchDogs();
     } else {
       console.log('error with updating dog with id: ', _id);
     }
   };
 
-  chooseImage = async () => {
-    const res = openGallery((data) => {
-      this.setState({ image: data });
-    });
-  };
 
   onDeleteClicked = async () => {
     const { _id, name } = this.props.dog;
@@ -130,100 +77,18 @@ class Settings extends React.Component {
   };
 
   render() {
-    const date = getDate(this.state.date);
-    const mealAmount = `${this.state.mealAmount}`;
-    const gender =
-      this.state.gender === 'Male' || this.state.gender === '0' ? 0 : 1;
     return (
       <View style={styles.container}>
         <DogHeader {...this.props} />
-        <View style={styles.formContainer}>
-          <View>
-            {/* <Text style={styles.header}>Settings</Text> */}
-            <ScrollView>
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.textInput}
-                  placeholder='Dog Name'
-                  maxLength={20}
-                  value={this.state.name}
-                  onChangeText={(value) => {
-                    this.setState({ name: value });
-                  }}
-                />
-
-                <TextInput
-                  style={styles.textInput}
-                  placeholder='Meal Amount'
-                  maxLength={20}
-                  value={mealAmount}
-                  onChangeText={(value) => {
-                    this.setState({ mealAmount: value });
-                  }}
-                />
-                <TextInput
-                  style={styles.textInput}
-                  placeholder='Birth Date'
-                  maxLength={20}
-                  onFocus={this.showDatePicker}
-                  value={date}
-                />
-                {this.state.toShowDatePicker && (
-                  <DateTimePicker
-                    value={new Date()}
-                    display='spinner'
-                    onChange={this.dateChanged}
-                  />
-                )}
-                <DogBreedSelector
-                  breed={this.state.breed}
-                  handleChanged={this.dogChanged}
-                />
-                <View style={styles.gender}>
-                  <RadioForm
-                    radio_props={this.radioProps}
-                    initial={gender}
-                    formHorizontal={true}
-                    labelHorizontal={false}
-                    buttonColor={'#2196f3'}
-                    animation={true}
-                    key={gender}
-                    onPress={(value) => {
-                      console.log(value);
-                      this.setState({ gender: value });
-                    }}
-                  />
-                </View>
-                <TouchableOpacity onPress={this.chooseImage}>
-                  {this.state.image === this.props.dog.image ? (
-                    <Avatar.Image
-                      size={200}
-                      style={styles.image}
-                      source={{ uri: `${API_BASE_URL}${this.state.image}` }}
-                    />
-                  ) : (
-                    <Avatar.Image
-                      size={200}
-                      style={styles.image}
-                      source={this.state.image}
-                    />
-                  )}
-                </TouchableOpacity>
-              </View>
-              <View style={styles.iconsContainer}>
-              <TouchableOpacity onPress={this.onSaveClicked}>
-                <MaterialCommunityIcons name='check' color='green' size={50} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={this.onDeleteClicked}>
-                <MaterialCommunityIcons name='delete' color='red' size={50} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={this.onCancelClicked}>
-                <MaterialCommunityIcons name='cancel' color='grey' size={50} />
-              </TouchableOpacity>
-            </View>
-            </ScrollView>
-          </View>
-        </View>
+        <ScrollView style={styles.formContainer}>
+          <Form
+            fields={getAllDogFormFields(this.props.dog)}
+            callBack={this.onSaveClicked}
+            closeForm={() => {
+              this.setState({ isModalVisible: false });
+            }}/>
+          </ScrollView>
+          <Button style={styles.delete} onPress={this.onDeleteClicked} title={"Delete"} />
       </View>
     );
   }
@@ -247,19 +112,23 @@ export default connect(mapStateToProps, mapDispatchToProps)(Settings);
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'red',
+    backgroundColor: backgroundColor,
     flex: 1,
   },
   content: {
     top: headerHeight,
   },
   formContainer: {
-    flex: 1,
-    marginTop: 50,
-    justifyContent: 'space-between',
-    paddingTop: 45,
+    flex: 2,
+    marginTop: 100,
+    position:"absolute",
+    height:"100%",
     backgroundColor: '#F5FCFF',
     backgroundColor: backgroundColor,
+  },
+  delete:{
+    position:"relative"
+    
   },
   header: {
     fontSize: 25,

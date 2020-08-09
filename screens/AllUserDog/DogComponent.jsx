@@ -20,8 +20,23 @@ export default class DogComponent extends Component {
     });
   };
 
+  getAgeFromBirthDate = (birthDate) => {
+    const date = new Date(birthDate);
+    const today = new Date();
+    const bDate = new Date(birthDate);
+    let age = today.getFullYear() - bDate.getFullYear();
+    const m = today.getMonth() - bDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < bDate.getDate())) {
+      age--;
+    }
+    console.log('age: ', age);
+    return age;
+  };
+
   render() {
     const { dog } = this.props;
+    const { birthDate, gender } = dog;
+    const age = this.getAgeFromBirthDate(birthDate);
     const image = `${API_BASE_URL}${dog.image}`;
     return (
       <TouchableOpacity style={style.container} onPress={this.dogPressed}>
@@ -37,22 +52,11 @@ export default class DogComponent extends Component {
           <Text style={style.dogName}>{dog.name}</Text>
         </View>
         <View style={style.innerText}>
-          <Text style={style.text}>
-            <Text>Last Meal: </Text>
-            {dog.lastMealTime ? (
-              <Text style={style.time}>{dog.lastMealTime}</Text>
-            ) : (
-              <Text style={style.time}>Unknown</Text>
-            )}
-          </Text>
-          <Text style={style.text}>
-            <Text>Next Meal: </Text>
-            {dog.nextMealTime ? (
-              <Text style={style.time}>{dog.nextMealTime}</Text>
-            ) : (
-              <Text style={style.time}>Unknown</Text>
-            )}
-          </Text>
+        <View style={style.text}>
+            <Text style={style.time}>{dog.breed}</Text>
+            <Text style={style.text}>{age}</Text>
+            <Text style={style.text}>{gender}</Text>
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -66,7 +70,6 @@ const style = StyleSheet.create({
     height: 140,
     width: '100%',
     padding: 20,
-    justifyContent: 'space-between',
     borderRadius: 30,
     borderWidth: 1,
     marginTop: 20,
@@ -81,6 +84,7 @@ const style = StyleSheet.create({
     right: 10,
   },
   innerText: {
+    marginHorizontal:20,
     justifyContent: 'space-between',
     marginVertical: 10,
     alignItems: 'flex-start',
@@ -108,5 +112,6 @@ const style = StyleSheet.create({
   time: {
     color: 'black',
     fontWeight: 'bold',
+    fontSize:20
   },
 });

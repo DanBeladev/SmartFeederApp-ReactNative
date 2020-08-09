@@ -60,6 +60,21 @@ const addDog_api = async (data, token) => {
   return res;
 };
 
+const updateDog_api = async (dogId, token, data) => {
+  const req_url = `${API_URL}dogs/update/${dogId}`;
+  console.log('data: ', data);
+  const config = {
+    method: 'put',
+    url: req_url,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data',
+    }
+  };
+  const res = await Axios.put(req_url,data, config);
+  return res;
+};
+
 const dropFood_api = async (token) => {
   const headers = createHeader(token);
   const res = await postRequest(`${API_URL}dogs/dropfood`, {}, headers);
@@ -131,23 +146,6 @@ const getFilteredData = async (filteredData) => {
   }
   // console.log('filtered data:', data);
   return data;
-};
-
-const updateDog_api = async (dogId, token, changesObj) => {
-  const { changes } = changesObj;
-  const req_url = `${API_URL}dogs/update/${dogId}`;
-  const data = getFilteredData(changes);
-  console.log('data: ', data);
-  const config = {
-    method: 'PUT',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'multipart/form-data',
-    },
-    data: data,
-  };
-  const res = await Axios.put(req_url, config);
-  return res;
 };
 
 export const API_INSTANCE = {
