@@ -11,6 +11,7 @@ import Header from '../../generalComponents/Header/Header';
 import { backgroundColor, headerHeight } from '../../common/constants';
 import { API_INSTANCE } from '../../api/api';
 
+
 class DogsScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -21,9 +22,6 @@ class DogsScreen extends React.Component {
       isModalVisible: false,
       currentUserID: '',
     };
-    this.storage = firebase.storage().ref();
-    this.dataBase = firebase.database();
-    this.counter = 0;
   }
 
   fetchDogs = async () => {
@@ -34,7 +32,6 @@ class DogsScreen extends React.Component {
   };
 
   async componentDidMount() {
-    console.log('in cdm');
     this.fetchDogs();
   }
 

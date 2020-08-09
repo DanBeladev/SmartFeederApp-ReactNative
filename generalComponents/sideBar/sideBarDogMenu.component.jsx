@@ -4,7 +4,6 @@ import { DrawerItem, DrawerContentScrollView } from '@react-navigation/drawer';
 import { Avatar, Title, Caption, Drawer } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
-import { signOut } from '../../actions/usersActions';
 import { API_INSTANCE } from '../../api/api';
 
 class DrawerContent extends Component {
@@ -139,11 +138,6 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    Logout: () => {
-      dispatch(signOut());
-    },
-  };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(DrawerContent);
 
