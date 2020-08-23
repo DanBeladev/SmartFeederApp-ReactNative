@@ -18,6 +18,22 @@ export const getDateWithoutSpaces = (date) => {
 };
 
 
+export const getAgeFromBirthDate = (birthDate) => {
+  const today = new Date();
+  const bDate = new Date(birthDate);
+  let monthes = today.getMonth() - bDate.getMonth();
+  if(monthes < 0){
+    monthes = monthes +12;
+  }
+  let age = today.getFullYear() - bDate.getFullYear();
+  const m = today.getMonth() - bDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < bDate.getDate())) {
+    age--;
+  }
+  console.log('age: ', age);
+  return `${age}.${monthes}`;
+};
+
 
 
 export const createHeader = (token) => {

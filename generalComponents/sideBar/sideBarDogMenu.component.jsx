@@ -6,10 +6,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import { signOut } from '../../actions/usersActions';
 import { API_INSTANCE } from '../../api/api';
+import { getAgeFromBirthDate } from '../Utils';
 
 class DrawerContent extends Component {
-
-
   makeNoise = async () => {
     const {token} = this.props.user.userDetails;
     const res  = await API_INSTANCE.makeNoise(token);
@@ -29,7 +28,6 @@ class DrawerContent extends Component {
     }
     else{
       console.log('problem with fetch amount');
-    
   }
 }
 
@@ -47,8 +45,8 @@ goPrevScreen = ()=>{
               size={120}
             />
             <Title style={styles.title}>{this.props.dog.name}</Title>
-            <Caption style={styles.caption}>Border Colley</Caption>
-            <Caption style={styles.caption}>4 years@ Female</Caption>
+    <Caption style={styles.caption}>{this.props.dog.breed}</Caption>
+    <Caption style={styles.caption}>{getAgeFromBirthDate(this.props.dog.birthDate)} years@{this.props.dog.gender}</Caption>
           </View>
           <Drawer.Section style={styles.drawerSection}>
             <DrawerItem
@@ -81,7 +79,7 @@ goPrevScreen = ()=>{
                   size={size}
                 />
               )}
-              label='Hisunim'
+              label='Vaccines'
               onPress={() => {
                 this.props.navigation.navigate('Hisunim');
               }}

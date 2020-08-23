@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import dogAvatar from '../../assets/noDogImg.jpg';
 import { API_BASE_URL } from '../../api/api';
+import {getAgeFromBirthDate} from '../../generalComponents/Utils'
 
 export default class DogComponent extends Component {
   constructor(props) {
@@ -20,23 +21,10 @@ export default class DogComponent extends Component {
     });
   };
 
-  getAgeFromBirthDate = (birthDate) => {
-    const date = new Date(birthDate);
-    const today = new Date();
-    const bDate = new Date(birthDate);
-    let age = today.getFullYear() - bDate.getFullYear();
-    const m = today.getMonth() - bDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < bDate.getDate())) {
-      age--;
-    }
-    console.log('age: ', age);
-    return age;
-  };
-
   render() {
     const { dog } = this.props;
     const { birthDate, gender } = dog;
-    const age = this.getAgeFromBirthDate(birthDate);
+    const age = getAgeFromBirthDate(birthDate);
     const image = `${API_BASE_URL}${dog.image}`;
     return (
       <TouchableOpacity style={style.container} onPress={this.dogPressed}>
@@ -54,7 +42,7 @@ export default class DogComponent extends Component {
         <View style={style.innerText}>
         <View style={style.text}>
             <Text style={style.time}>{dog.breed}</Text>
-            <Text style={style.text}>{age}</Text>
+            <Text style={style.text}>{age} years old</Text>
             <Text style={style.text}>{gender}</Text>
           </View>
         </View>
