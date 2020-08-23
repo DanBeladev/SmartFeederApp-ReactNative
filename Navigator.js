@@ -13,6 +13,7 @@ import DogManagment from './screens/dogManagement/DogManagment.screen';
 import Settings from './screens/dogManagement/Settings.screen';
 import Statistics from './screens/dogManagement/Statistics.screen';
 import HisunimScreen from './screens/dogManagement/Hisunim.screen';
+import  Notifications  from './screens/Notifications.screen';
 
 const Stack = createStackNavigator();
 const UserDrawer = createDrawerNavigator();
@@ -41,6 +42,7 @@ function HomeDrawer() {
       drawerContent={(props) => <DrawerContent {...props} />}
     >
       <UserDrawer.Screen name='Main' component={DogsScreen} />
+      <UserDrawer.Screen name='Notifications' component={Notifications} />
       <UserDrawer.Screen name='Fucker' component={Header} />
     </UserDrawer.Navigator>
   );

@@ -49,8 +49,8 @@ render(){
             icon={({ color, size }) => (
               <MaterialCommunityIcons name="tune" color={color} size={size} />
             )}
-            label="Preferences"
-            onPress={() => {this.props.navigation.jumpTo('Fucker')}}
+            label="Notifications"
+            onPress={() => {this.props.navigation.jumpTo('Notifications')}}
           />
         </Drawer.Section>
 
