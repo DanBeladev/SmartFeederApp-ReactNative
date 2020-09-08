@@ -15,14 +15,12 @@ import {getDateWithoutSpaces} from '../../generalComponents/Utils'
 class DogsScreen extends React.Component {
   constructor(props) {
     super(props);
-    console.log('in ctor');
     this.state = {
       isLoaded: false,
       allUserDogs: [],
       isModalVisible: false,
       currentUserID: '',
     };
-    console.log(this.props.user);
   }
 
   fetchDogs = async () => {
@@ -33,11 +31,7 @@ class DogsScreen extends React.Component {
   };
 
   async componentDidMount() {
-    console.log('in cdm');
     this.fetchDogs();
-  }
-  componentWillUnmount(){
-    console.log("bye bye");
   }
 
   buildForm = () => {
@@ -54,8 +48,6 @@ class DogsScreen extends React.Component {
   };
 
   callBackForDogChoosing = (dog) => {
-    console.log("fdfdfdfdf yfyfydyufd");
-    console.log(dog);
     this.props.setDog(dog);
   };
 
@@ -93,8 +85,6 @@ class DogsScreen extends React.Component {
   };
 
   render() {
-    console.log("dsdsdsd");
-    console.log(this.props.user);
     const allDogsObj = this.state.allUserDogs;
 
     return (

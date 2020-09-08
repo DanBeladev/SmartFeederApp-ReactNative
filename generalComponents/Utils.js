@@ -30,7 +30,6 @@ export const getAgeFromBirthDate = (birthDate) => {
   if (m < 0 || (m === 0 && today.getDate() < bDate.getDate())) {
     age--;
   }
-  console.log('age: ', age);
   return `${age}.${monthes}`;
 };
 

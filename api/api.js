@@ -56,10 +56,10 @@ const markMessageAsRead = async (token, notificationID)=>{
   return data;
 }
 
-const getAllMessages = async (token) => {
+const getAllMessages = async (token, index) => {
   const headers = createHeader(token);
   const data = await getRequest(
-    `${API_URL}users/notification/`,
+    `${API_URL}users/notification/${index}`,
     headers,
     {}
   );
@@ -83,7 +83,6 @@ const addDog_api = async (data, token) => {
 
 const updateDog_api = async (dogId, token, data) => {
   const req_url = `${API_URL}dogs/update/${dogId}`;
-  console.log('data: ', data);
   const config = {
     method: 'put',
     url: req_url,
@@ -105,14 +104,12 @@ const dropFood_api = async (token, dogId) => {
 const makeNoise_api = async (token, dogId) => {
   const headers = createHeader(token);
   const res = await postRequest(`${API_URL}dogs/makenoise/${dogId}`, {}, headers);
-  console.log('res', res);
   return res;
 };
 
 const howMuchLeft_api = async (token) => {
   const headers = createHeader(token);
   const res = await getRequest(`${API_URL}dogs/howmuch`, headers, {});
-  console.log('res', res);
   return res;
 };
 
@@ -136,18 +133,13 @@ const fetchDogNames_api = async () => {
 };
 
 const getFilteredData = async (filteredData) => {
-  // console.log('in tem fun', filteredData);
   let data = new FormData();
 
   for (let item of filteredData) {
-    // console.log('in foreach..item: ',item);
     const item1 = JSON.parse(JSON.stringify(item));
-    // console.log('after parsing: ', item1);
 
     const keysArray = Object.keys(item);
-    // console.log('keysArray: ', keysArray);
     const key = keysArray[0];
-    // console.log('key:' ,key);
     if (key === 'image') {
       const array = item[key].split('/');
       const name = array[array.length - 1];
@@ -158,14 +150,10 @@ const getFilteredData = async (filteredData) => {
       };
       data.append(key, photo);
     } else {
-      // console.log('item: ',item);
-      // console.log('item.key: ',item[key]);
       const value = item[key];
-      // console.log('value:', value);
       data.append(key, value);
     }
   }
-  // console.log('filtered data:', data);
   return data;
 };
 

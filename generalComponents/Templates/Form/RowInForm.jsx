@@ -61,7 +61,6 @@ export default class RowInForm extends React.Component {
     }
     switch (this.props.params.type) {
       case 'text':
-      console.log(this.props.params)
         this.elem = (
           <TextInput
             style={styles.elements}

@@ -17,9 +17,6 @@ class DogDetails extends React.Component {
   componentDidMount() {
     this.spring();
   }
-  componentWillUnmount(){
-    console.log("im died");
-  }
 
   spring = () => {
     this.springValue.setValue(0.3);

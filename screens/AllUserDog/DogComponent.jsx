@@ -26,6 +26,7 @@ export default class DogComponent extends Component {
     const { birthDate, gender } = dog;
     const age = getAgeFromBirthDate(birthDate);
     const image = `${API_BASE_URL}${dog.image}`;
+    console.log('bobi image: ', image);
     return (
       <TouchableOpacity style={style.container} onPress={this.dogPressed}>
         <View style={style.leftSide}>

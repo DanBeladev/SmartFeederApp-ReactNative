@@ -36,7 +36,6 @@ export default class Statistics extends React.Component {
     switch(dataWidth){
       case DAILY:
         data=[Math.random() * 100, Math.random()* 100, Math.random()* 100];
-        console.log(data);
         break;
       case WEEKLY:
         for(let i=0;i<7;i++){
@@ -86,7 +85,6 @@ export default class Statistics extends React.Component {
       switch(this.dataType){
         case DAILY:
           for(let i=0; i<3;i++){
-            console.log(DAILY_LABELS[i]);
             realLabels.push(DAILY_LABELS[i]);
           }
           break;

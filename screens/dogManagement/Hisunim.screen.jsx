@@ -28,7 +28,6 @@ class HisunimScreen extends React.Component {
       date: '',
       showDatePicker: false,
     };
-    console.log("fdfdfdf");
   }
 
   componentDidMount = async () => {
@@ -69,7 +68,6 @@ class HisunimScreen extends React.Component {
 
   dateChanged = (event, selectedDate) => {
     const currentDate = selectedDate || date;
-    console.log(currentDate);
     this.setState({ date: getDate(currentDate), showDatePicker: false });
   };
 

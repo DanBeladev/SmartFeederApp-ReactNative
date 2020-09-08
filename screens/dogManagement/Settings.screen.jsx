@@ -29,8 +29,6 @@ class Settings extends React.Component {
     const { _id, name } = this.props.dog;
     const { token } = this.props.user;
     const changedFields = this.getOnlyChangedFields(fieldsToValue);
-    console.log("the fields that changed:");
-    console.log(changedFields);
     let data = new FormData();
     changedFields.forEach(v=>{
       if(v!=="dogImg"){
