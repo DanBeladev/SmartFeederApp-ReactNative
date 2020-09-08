@@ -11,7 +11,8 @@ import { getAgeFromBirthDate } from '../Utils';
 class DrawerContent extends Component {
   makeNoise = async () => {
     const {token} = this.props.user.userDetails;
-    const res  = await API_INSTANCE.makeNoise(token);
+    console.log(this.props.dog);
+    const res  = await API_INSTANCE.makeNoise(token, this.props.dog._id);
     if(res.data){
       console.log('was a noise');
     }

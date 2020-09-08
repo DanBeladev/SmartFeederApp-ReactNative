@@ -45,6 +45,27 @@ const addHisun_api = async (hisun, dogId, token) => {
   return data;
 };
 
+const markMessageAsRead = async (token, notificationID)=>{
+  //POST /api/v1.0/users/notification/:notificationID
+  const headers = createHeader(token);
+  const data = await postRequest(
+    `${API_URL}users/notification/${notificationID}`,
+    {},
+    headers
+  )
+  return data;
+}
+
+const getAllMessages = async (token) => {
+  const headers = createHeader(token);
+  const data = await getRequest(
+    `${API_URL}users/notification/`,
+    headers,
+    {}
+  );
+  return data;
+};
+
 const addDog_api = async (data, token) => {
   let config = {
     method: 'post',
@@ -75,15 +96,15 @@ const updateDog_api = async (dogId, token, data) => {
   return res;
 };
 
-const dropFood_api = async (token) => {
+const dropFood_api = async (token, dogId) => {
   const headers = createHeader(token);
-  const res = await postRequest(`${API_URL}dogs/dropfood`, {}, headers);
+  const res = await postRequest(`${API_URL}dogs/dropfood/${dogId}`, {}, headers);
   return res;
 };
 
-const makeNoise_api = async (token) => {
+const makeNoise_api = async (token, dogId) => {
   const headers = createHeader(token);
-  const res = await postRequest(`${API_URL}dogs/makenoise`, {}, headers);
+  const res = await postRequest(`${API_URL}dogs/makenoise/${dogId}`, {}, headers);
   console.log('res', res);
   return res;
 };
@@ -161,6 +182,8 @@ export const API_INSTANCE = {
   deleteDog: deleteDog_api,
   updateDog: updateDog_api,
   fetchDogNames: fetchDogNames_api,
+  getAllMessages: getAllMessages,
+  markMessageAsRead: markMessageAsRead
 };
 
 const postRequest = async (url, body, headers = {}) => {

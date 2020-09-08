@@ -33,7 +33,7 @@ class DogDetails extends React.Component {
   dropFoodClicked = async () => {
     this.setState({ isLoading: true });
     const { token } = this.props.user.userDetails
-    const res = await API_INSTANCE.dropFood(token);
+    const res = await API_INSTANCE.dropFood(token, this.props.dog._id);
     if (res.data) {
       this.setState({ isLoading: false });
     }
@@ -69,6 +69,7 @@ AppRegistry.registerComponent('animations', () => DogDetails);
 const mapStateToProps = (state) => {
   return {
     user: state.user,
+    dog: state.dog.currentDog,
   };
 };
 export default connect(mapStateToProps)(DogDetails);

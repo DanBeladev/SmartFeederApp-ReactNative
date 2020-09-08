@@ -22,6 +22,7 @@ class DogsScreen extends React.Component {
       isModalVisible: false,
       currentUserID: '',
     };
+    console.log(this.props.user);
   }
 
   fetchDogs = async () => {
@@ -53,6 +54,8 @@ class DogsScreen extends React.Component {
   };
 
   callBackForDogChoosing = (dog) => {
+    console.log("fdfdfdfdf yfyfydyufd");
+    console.log(dog);
     this.props.setDog(dog);
   };
 
