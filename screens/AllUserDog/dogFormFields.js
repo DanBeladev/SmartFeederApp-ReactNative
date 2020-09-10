@@ -46,6 +46,15 @@ export function getAllDogFormFields(vals){
             title: 'ChipId',
             labelVisibale: true,
         
-        }]
+        },
+        {
+            type: 'combo',
+            field: 'gramPerMeal',
+            title: 'Amount Of Meal (gr)',
+            data:[{value:50, label:"50g"},{value:100, label:"100g"},{value:50, label:"150g"},{value:200, label:"200g"}],
+            labelVisibale: true,
+            valueType: 'Integer'
+        }
+    ]
     )
 }

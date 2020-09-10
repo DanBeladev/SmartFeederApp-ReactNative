@@ -60,6 +60,7 @@ class DogsScreen extends React.Component {
     let data = new FormData();
     data.append('name', fieldsToValue.name);
     data.append('gender', fieldsToValue.gender ? fieldsToValue.gender : 'male');
+    data.append('gramPerMeal', fieldsToValue.gramPerMeal ? fieldsToValue.gramPerMeal : null);
     data.append('breed', fieldsToValue.breed ? fieldsToValue.breed : null);
     data.append('birthDate',getDateWithoutSpaces(fieldsToValue.date));
     data.append('espSerialNumber', fieldsToValue.espSerialNumber? fieldsToValue.espSerialNumber:null);
