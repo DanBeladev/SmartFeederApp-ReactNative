@@ -35,7 +35,7 @@
     "react-native-paper": "^3.8.0",
     "react-native-picker": "^4.3.7",
     "react-native-picker-dropdown": "^0.1.2",
-    "react-native-reanimated": "~1.4.0",
+    "react-native-reanimated": "~2.10.0",
     "react-native-router-flux": "^4.2.0",
     "react-native-safe-area-context": "0.6.0",
     "react-native-screens": "2.0.0-alpha.12",
